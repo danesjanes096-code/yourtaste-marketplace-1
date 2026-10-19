@@ -6,7 +6,7 @@ const required = [
   'apps/web/app/page.tsx', 'apps/web/app/layout.tsx',
   'apps/web/app/auth/sign-in/SignInForm.tsx', 'apps/web/app/auth/sign-up/SignUpForm.tsx',
   'apps/web/app/account/addresses/AddressBook.tsx', 'apps/web/app/api/products/route.ts',
-  'apps/web/app/api/checkout/orders/route.ts', 'apps/web/app/auth/callback/route.ts', 'apps/web/lib/security/safe-next.mjs', 'apps/web/lib/security/safe-next.d.mts', 'scripts/test-auth-redirect.mjs', 'scripts/check-audit.mjs', 'scripts/test-audit-policy.mjs', 'apps/web/proxy.ts', 'apps/web/eslint.config.mjs',
+  'apps/web/app/api/checkout/orders/route.ts', 'apps/web/app/auth/callback/route.ts', 'apps/web/lib/security/safe-next.mjs', 'apps/web/lib/security/safe-next.d.mts', 'scripts/test-auth-redirect.mjs', 'scripts/check-audit.mjs', 'scripts/test-audit-policy.mjs', 'docs/STAGING_AUTHORIZATION_TEST.md', 'apps/web/proxy.ts', 'apps/web/eslint.config.mjs',
   'apps/mobile/app/index.tsx', 'packages/shared/src/index.ts',
   '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md', 'docs/DEPENDENCY_SECURITY_EXCEPTIONS.md', 'supabase/tests/security_smoke.sql', 'supabase/tests/authz_function_guards.sql', 'scripts/test-staging-authorization.mjs',
   ...[
