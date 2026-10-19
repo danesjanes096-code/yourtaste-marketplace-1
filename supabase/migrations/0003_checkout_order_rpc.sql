@@ -37,7 +37,7 @@ begin
  if v_total_quantity>100 then raise exception using errcode='22023',message='cart_quantity_limit'; end if;
  select to_jsonb(a)-'user_id'-'created_at' into v_address_snapshot from public.addresses a where a.id=p_address_id and a.user_id=v_customer_id;
  if v_address_snapshot is null then raise exception using errcode='22023',message='address_not_found'; end if;
- select public.encode(public.digest(p_address_id::text||':'||(
+ select encode(public.digest(p_address_id::text||':'||(
    select jsonb_agg(jsonb_build_object('product_id',x.product_id,'quantity',x.quantity) order by x.product_id)::text
    from jsonb_to_recordset(p_items) as x(product_id uuid,quantity integer)
  ),'sha256'),'hex') into v_request_hash;
