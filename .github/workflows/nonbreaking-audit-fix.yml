@@ -19,7 +19,7 @@ jobs:
           node-version: 22
       - run: npm ci
       - name: Apply non-breaking npm audit fixes only
-        run: npm audit fix --no-fund
+        run: npm audit fix --no-fund || true
       - name: Report remaining advisories
         run: |
           npm audit --json > /tmp/audit.json || true
