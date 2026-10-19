@@ -22,5 +22,13 @@ jobs:
           node scripts/check-audit.mjs /tmp/npm-audit.json
       - run: npm run verify:source
       - run: npm run test:security
+      - run: node --check scripts/test-staging-authorization.mjs
+      - run: npm --workspace apps/web run lint
       - run: npm run typecheck
       - run: npm run build:web
+      - name: Validate Expo project
+        working-directory: apps/mobile
+        run: npx expo-doctor
+      - name: Bundle Android app
+        working-directory: apps/mobile
+        run: npx expo export --platform android
