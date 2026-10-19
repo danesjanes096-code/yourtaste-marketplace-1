@@ -14,7 +14,7 @@ This checklist is the release control for the current private-pilot approach. A 
 ## Gate 1 — code and supply chain
 
 - [x] GitHub Actions source verification, TypeScript typecheck, and Next.js production build pass on the current recorded run.
-- [ ] Commit a reproducible dependency lockfile and switch CI to `npm ci`.
+- [ ] Commit a reproducible dependency lockfile and verify CI passes with `npm ci`.
 - [ ] Add dependency vulnerability scanning and secret scanning; review advisories before upgrades.
 - [ ] Run the full source verification from a clean checkout and verify no secrets or local artifacts are committed.
 
@@ -66,7 +66,7 @@ This checklist is the release control for the current private-pilot approach. A 
 
 ## Current known blockers
 
-- No committed dependency lockfile; CI uses `npm install`, not `npm ci`.
+- Dependency lockfile and `npm ci` changes are prepared on the lockfile-bootstrap branch; clean-install CI must pass before this gate is closed.
 - Supabase security advisor reports five callable SECURITY DEFINER functions. Their function bodies include checks, but these must be tested with real JWT identities and reviewed rather than waived automatically.
 - Fresh disposable-project migration replay and full schema diff are outstanding.
 - Payment, shipping, tax/GST, notifications, monitoring, backup/restore, and production hosting are not finished.
