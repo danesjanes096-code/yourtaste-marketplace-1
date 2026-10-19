@@ -67,3 +67,12 @@ test("fails closed on circular or incomplete high-severity chains", () => {
   assert.deepEqual(findBlockingHighVulnerabilities(circular).map((v) => v.name), ["a", "b"]);
   assert.deepEqual(findBlockingHighVulnerabilities(incomplete).map((v) => v.name), ["a"]);
 });
+
+test("allows cyclic dependency chains when another path reaches only an approved advisory", () => {
+  const graph = {
+    a: { severity: "high", isDirect: false, via: ["b", "braces"] },
+    b: { severity: "high", isDirect: false, via: ["a"] },
+    braces: { severity: "high", isDirect: false, via: [{ url: bracesUrl }] },
+  };
+  assert.deepEqual(findBlockingHighVulnerabilities(graph), []);
+});

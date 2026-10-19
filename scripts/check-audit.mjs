@@ -48,13 +48,15 @@ export function findBlockingHighVulnerabilities(vulnerabilities) {
       }
     }
 
-    return { ok: foundAllowed, foundAllowed };
+    return { ok: true, foundAllowed };
   }
 
   return Object.entries(vulnerabilities)
-    .filter(([name, vulnerability]) =>
-      BLOCKING.has(vulnerability.severity) && !analyze(name).ok
-    )
+    .filter(([name, vulnerability]) => {
+      if (!BLOCKING.has(vulnerability.severity)) return false;
+      const result = analyze(name);
+      return !result.ok || !result.foundAllowed;
+    })
     .map(([name, vulnerability]) => ({
       name,
       severity: vulnerability.severity,
