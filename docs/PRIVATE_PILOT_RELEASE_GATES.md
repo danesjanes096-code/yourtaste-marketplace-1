@@ -21,8 +21,9 @@ This checklist is the release control for the current private-pilot approach. A 
 ## Gate 2 — identity and authorization
 
 - [x] Staging security/schema smoke test checks RLS coverage, client privileges on checkout idempotency records, helper grants, SECURITY DEFINER search paths, index coverage, and selected policy counts.
-- [ ] Run actual JWT-based tests as anonymous, customer A, customer B, seller A, seller B, and admin.
-- [ ] Confirm a non-admin cannot invoke moderation RPCs successfully, even with forged product/vendor IDs.
+- [x] Staging SQL guard test rejects unauthenticated checkout/address RPCs and non-admin moderation calls using simulated JWT subject claims (`supabase/tests/authz_function_guards.sql`).
+- [ ] Run actual PostgREST requests with real JWTs as anonymous, customer A, customer B, seller A, seller B, and admin; SQL claim simulation is not a substitute.
+- [ ] Confirm real non-admin JWTs cannot invoke moderation RPCs successfully, even with forged product/vendor IDs.
 - [ ] Confirm address/order ownership cannot be bypassed by changing IDs.
 - [ ] Test signup, email confirmation, login, logout, session expiry, password reset, and redirect allowlists.
 - [ ] Add rate limiting and abuse protection to auth, checkout, seller application, product submission, and upload flows.
