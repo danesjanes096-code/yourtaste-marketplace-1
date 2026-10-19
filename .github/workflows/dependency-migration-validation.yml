@@ -25,6 +25,9 @@ jobs:
       - name: Install required Expo Router peer dependencies
         working-directory: apps/mobile
         run: npx expo install expo-constants expo-linking
+      - name: Install SVG peer dependency for Lucide icons
+        working-directory: apps/mobile
+        run: npx expo install react-native-svg
       - name: Regenerate lockfile from workspace manifests
         run: |
           rm -rf node_modules apps/*/node_modules packages/*/node_modules package-lock.json
