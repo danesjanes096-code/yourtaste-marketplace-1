@@ -8,7 +8,7 @@ const required = [
   'apps/web/app/account/addresses/AddressBook.tsx', 'apps/web/app/api/products/route.ts',
   'apps/web/app/api/checkout/orders/route.ts', 'apps/web/middleware.ts',
   'apps/mobile/app/index.tsx', 'packages/shared/src/index.ts',
-  '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md',
+  '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md', 'supabase/tests/security_smoke.sql',
   ...[
     '20261019195925_marketplace_core.sql',
     '20261019195937_signup_catalogue_guards.sql',
@@ -36,6 +36,10 @@ for (const invariant of ['create_checkout_order', 'idempotencyKey', 'authenticat
 const migrations = fs.readFileSync('supabase/migrations/20261019195955_checkout_order_rpc.sql', 'utf8');
 for (const invariant of ['create_checkout_order', 'release_expired_order_reservations', 'idempotency_key_reused_with_different_request']) {
   if (!migrations.includes(invariant)) errors.push(`Checkout migration invariant missing: ${invariant}`);
+}
+const securitySmoke = fs.readFileSync('supabase/tests/security_smoke.sql', 'utf8');
+for (const invariant of ['relrowsecurity', 'checkout_requests', 'private.is_admin()', 'search_path=""']) {
+  if (!securitySmoke.includes(invariant)) errors.push(`Security smoke test invariant missing: ${invariant}`);
 }
 const hardening = fs.readFileSync('supabase/migrations/20261019203635_checkout_hardening.sql', 'utf8');
 for (const invariant of ['extensions.digest', 'deny client access to checkout requests', "set search_path TO ''"]) {
