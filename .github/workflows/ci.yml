@@ -16,6 +16,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Audit dependency vulnerabilities
+        run: npm audit --audit-level=high
       - run: npm run verify:source
       - run: npm run test:security
       - run: npm run typecheck
