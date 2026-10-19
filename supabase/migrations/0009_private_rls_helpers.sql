@@ -113,7 +113,6 @@ alter function public.guard_vendor_moderation_fields() set search_path='';
 alter function public.guard_product_publication() set search_path='';
 alter function public.admin_review_vendor(uuid,boolean,text) set search_path='';
 alter function public.admin_review_product(uuid,boolean,text) set search_path='';
-alter function public.create_checkout_order(uuid,jsonb,text) set search_path='';
 alter function public.release_expired_order_reservations() set search_path='';
 alter function public.save_customer_address(text,text,text,text,text,text,text,text,boolean) set search_path='';
 alter function public.set_default_customer_address(uuid) set search_path='';
