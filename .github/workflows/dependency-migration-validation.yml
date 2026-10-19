@@ -24,20 +24,7 @@ jobs:
         run: npx expo install --fix
       - name: Refresh lockfile
         run: npm install --no-fund --no-audit
-      - name: Report remaining dependency advisories
-        run: |
-          npm audit --json > /tmp/audit.json || true
-          node -e "const a=require('/tmp/audit.json'); console.log(JSON.stringify({metadata:a.metadata?.vulnerabilities, advisories:Object.entries(a.vulnerabilities||{}).map(([name,v])=>({name,severity:v.severity,isDirect:v.isDirect,range:v.range,fixAvailable:v.fixAvailable}))},null,2))"
-      - name: Run repository checks
-        run: |
-          npm run verify:source
-          npm run test:security
-          npm run typecheck
-          npm run build:web
-      - name: Validate Expo project
-        working-directory: apps/mobile
-        run: npx expo-doctor
-      - name: Commit lockfile and Expo compatibility adjustments
+      - name: Commit lockfile and Expo compatibility adjustments before validation
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -46,3 +33,17 @@ jobs:
             git commit -m "security: update dependency lockfile for patched releases"
             git push origin HEAD:${{ github.ref_name }}
           fi
+      - name: Report remaining dependency advisories
+        run: |
+          npm audit --json > /tmp/audit.json || true
+          node -e "const a=require('/tmp/audit.json'); console.log(JSON.stringify({metadata:a.metadata?.vulnerabilities, advisories:Object.entries(a.vulnerabilities||{}).map(([name,v])=>({name,severity:v.severity,isDirect:v.isDirect,range:v.range,fixAvailable:v.fixAvailable}))},null,2))"
+      - name: Run repository checks
+        run: |
+          npm ci
+          npm run verify:source
+          npm run test:security
+          npm run typecheck
+          npm run build:web
+      - name: Validate Expo project
+        working-directory: apps/mobile
+        run: npx expo-doctor
