@@ -72,7 +72,7 @@ begin
  update public.checkout_requests set order_id=v_order_id where id=v_request.id;
  return jsonb_build_object('orderId',v_order_id,'orderNumber',v_order_number,'status','pending_payment','totalPaise',v_subtotal,
   'currency','INR','paymentExpiresAt',now()+interval '15 minutes','reused',false);
-end; $function$
+end; $function$;
 
 revoke all on function public.create_checkout_order(uuid,jsonb,text) from public, anon;
 grant execute on function public.create_checkout_order(uuid,jsonb,text) to authenticated;
