@@ -8,7 +8,7 @@ const required = [
   'apps/web/app/account/addresses/AddressBook.tsx', 'apps/web/app/api/products/route.ts',
   'apps/web/app/api/checkout/orders/route.ts', 'apps/web/app/auth/callback/route.ts', 'apps/web/lib/security/safe-next.mjs', 'apps/web/lib/security/safe-next.d.mts', 'scripts/test-auth-redirect.mjs', 'apps/web/middleware.ts',
   'apps/mobile/app/index.tsx', 'packages/shared/src/index.ts',
-  '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md', 'supabase/tests/security_smoke.sql',
+  '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md', 'supabase/tests/security_smoke.sql', 'supabase/tests/authz_function_guards.sql',
   ...[
     '20261019195925_marketplace_core.sql',
     '20261019195937_signup_catalogue_guards.sql',
