@@ -25,10 +25,8 @@ jobs:
       - name: Install required Expo Router peer dependencies
         working-directory: apps/mobile
         run: npx expo install expo-constants expo-linking
-      - name: Refresh and deduplicate lockfile
-        run: |
-          npm install --no-fund --no-audit
-          npm dedupe --no-fund --no-audit
+      - name: Refresh lockfile
+        run: npm install --no-fund --no-audit
       - name: Commit lockfile and Expo compatibility adjustments before validation
         run: |
           git config user.name "github-actions[bot]"
@@ -38,13 +36,14 @@ jobs:
             git commit -m "security: update dependency lockfile for patched releases"
             git push origin HEAD:${{ github.ref_name }}
           fi
+      - name: Clean install from committed lockfile
+        run: npm ci
       - name: Report remaining dependency advisories
         run: |
           npm audit --json > /tmp/audit.json || true
-          node -e "const a=require('/tmp/audit.json'); console.log(JSON.stringify({metadata:a.metadata?.vulnerabilities, advisories:Object.entries(a.vulnerabilities||{}).map(([name,v])=>({name,severity:v.severity,isDirect:v.isDirect,range:v.range,fixAvailable:v.fixAvailable}))},null,2))"
+          node -e "const a=require('/tmp/audit.json'); console.log(JSON.stringify({metadata:a.metadata?.vulnerabilities, advisories:Object.entries(a.vulnerabilities||{}).map(([name,v])=>({name,severity:v.severity,isDirect:v.isDirect,range:v.range,via:v.via.map(x=>typeof x==='string'?x:{title:x.title,url:x.url,range:x.range}),fixAvailable:v.fixAvailable}))},null,2))"
       - name: Run repository checks
         run: |
-          npm ci
           npm run verify:source
           npm run test:security
           npm run typecheck
@@ -52,3 +51,6 @@ jobs:
       - name: Validate Expo project
         working-directory: apps/mobile
         run: npx expo-doctor
+      - name: Bundle Android app
+        working-directory: apps/mobile
+        run: npx expo export --platform android
