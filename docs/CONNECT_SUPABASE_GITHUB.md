@@ -15,7 +15,7 @@ The staging project is in Mumbai (`ap-south-1`). Project URL: `https://bxwbrnzhy
 
 ## Migrations
 
-Migration files are versioned under `supabase/migrations`. The eight migrations were previously applied to the staging project. Before using this repository as a source of truth, compare the exact GitHub migration contents against the live migration history and apply them to a disposable fresh project. Do not blindly re-run schema-changing SQL against production.
+Migration files are versioned under `supabase/migrations`. The live staging project currently records migrations 0001–0008. Migration 0009 (`private_rls_helpers`) is committed but has **not** been applied to staging yet. The GitHub SQL has been reconciled in intent, but exact SQL/schema parity still requires a fresh disposable database run and diff. Do not blindly re-run schema-changing SQL against staging or production.
 
 ## GitHub Actions
 
