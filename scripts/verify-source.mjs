@@ -6,7 +6,7 @@ const required = [
   'apps/web/app/page.tsx', 'apps/web/app/layout.tsx',
   'apps/web/app/auth/sign-in/SignInForm.tsx', 'apps/web/app/auth/sign-up/SignUpForm.tsx',
   'apps/web/app/account/addresses/AddressBook.tsx', 'apps/web/app/api/products/route.ts',
-  'apps/web/app/api/checkout/orders/route.ts', 'apps/web/middleware.ts',
+  'apps/web/app/api/checkout/orders/route.ts', 'apps/web/app/auth/callback/route.ts', 'apps/web/lib/security/safe-next.mjs', 'apps/web/lib/security/safe-next.d.mts', 'scripts/test-auth-redirect.mjs', 'apps/web/middleware.ts',
   'apps/mobile/app/index.tsx', 'packages/shared/src/index.ts',
   '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md', 'supabase/tests/security_smoke.sql',
   ...[
@@ -35,8 +35,10 @@ const nextConfig = fs.readFileSync('apps/web/next.config.mjs', 'utf8');
 for (const header of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy']) {
   if (!nextConfig.includes(header)) errors.push(`Security response header missing: ${header}`);
 }
+const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+if (packageJson.scripts?.['test:security'] !== 'node --test scripts/test-auth-redirect.mjs') errors.push('Security redirect test script is missing.');
 const authCallback = fs.readFileSync('apps/web/app/auth/callback/route.ts', 'utf8');
-for (const invariant of ['destination.origin !== base.origin', 'safeNext(request.nextUrl.searchParams.get("next"),request.url)']) {
+for (const invariant of ['safeNext', 'request.nextUrl.searchParams.get("next")']) {
   if (!authCallback.includes(invariant)) errors.push(`Auth callback redirect invariant missing: ${invariant}`);
 }
 const checkout = fs.readFileSync('apps/web/app/api/checkout/orders/route.ts', 'utf8');

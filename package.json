@@ -12,7 +12,8 @@
     "lint:web": "npm --workspace apps/web run lint",
     "dev:mobile": "npm --workspace apps/mobile run start",
     "typecheck": "npm --workspace apps/web run typecheck",
-    "verify:source": "node scripts/verify-source.mjs"
+    "verify:source": "node scripts/verify-source.mjs",
+    "test:security": "node --test scripts/test-auth-redirect.mjs"
   },
   "engines": {
     "node": ">=22"

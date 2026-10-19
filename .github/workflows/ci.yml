@@ -16,5 +16,6 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npm run verify:source
+      - run: npm run test:security
       - run: npm run typecheck
       - run: npm run build:web
