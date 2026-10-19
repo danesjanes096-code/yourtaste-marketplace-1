@@ -1,0 +1,12 @@
+import Link from "next/link";
+import {redirect} from "next/navigation";
+import {createSupabaseServerClient} from "@/lib/supabase/server";
+import SignOutButton from "./SignOutButton";
+export const dynamic="force-dynamic";
+export default async function AccountPage(){
+ const supabase=await createSupabaseServerClient();
+ if(!supabase)return <main className="min-h-screen bg-[#fffaf5] p-8"><div className="mx-auto max-w-xl rounded-3xl border border-[#eee7df] bg-white p-8"><h1 className="font-display text-3xl font-extrabold">Account setup needed</h1><p className="mt-3 text-sm leading-6 text-[#786e65]">Configure Supabase and Auth redirect URLs before using account features.</p><Link className="btn-primary mt-5 inline-flex" href="/">Back to YourTaste</Link></div></main>;
+ const {data:{user}}=await supabase.auth.getUser();if(!user)redirect("/auth/sign-in?next=/account");
+ const {data:profile}=await supabase.from("profiles").select("display_name,role").eq("id",user.id).maybeSingle();const role=profile?.role??"customer";
+ return <main className="min-h-screen bg-[#fffaf5] px-5 py-10"><div className="mx-auto max-w-3xl"><Link href="/" className="font-display text-3xl font-extrabold tracking-[-2px]">yourtaste<span className="text-[#ff6848]">.</span></Link><section className="mt-8 rounded-[28px] border border-[#eee7df] bg-white p-6 sm:p-10"><p className="text-[10px] font-bold uppercase tracking-[2px] text-[#f05f41]">YOUR ACCOUNT</p><h1 className="mt-2 font-display text-3xl font-extrabold">Welcome{profile?.display_name?`, ${profile.display_name}`:" back"}.</h1><p className="mt-3 text-sm leading-6 text-[#786e65]">Signed in as {user.email}. Account role: <strong>{role}</strong>.</p><div className="mt-7 rounded-2xl bg-[#f7f1eb] p-5"><h2 className="font-bold">Marketplace access</h2><p className="mt-2 text-sm leading-6 text-[#786e65]">{role==="admin"?"Administrator access is enabled.":role==="vendor"?"Seller access is enabled. You can submit products for review.":"Your account is a customer account. Apply to sell if you want to list products."}</p></div><div className="mt-6 flex flex-wrap gap-3"><Link href="/" className="btn-primary">Continue shopping</Link><Link href="/account/addresses" className="btn-outline">Address book</Link>{role==="vendor"&&<Link href="/seller/products" className="btn-outline">Seller workspace</Link>}{role==="customer"&&<Link href="/sell" className="btn-outline">Apply to sell</Link>}{role==="admin"&&<Link href="/admin" className="btn-outline">Moderation</Link>}<SignOutButton/></div></section></div></main>;
+}
