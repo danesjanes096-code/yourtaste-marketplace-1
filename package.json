@@ -2,7 +2,10 @@
   "name": "yourtaste-marketplace",
   "private": true,
   "version": "0.1.0",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev:web": "npm --workspace apps/web run dev",
     "build:web": "npm --workspace apps/web run build",
@@ -11,5 +14,7 @@
     "typecheck": "npm --workspace apps/web run typecheck",
     "verify:source": "node scripts/verify-source.mjs"
   },
-  "engines": { "node": ">=20.11" }
+  "engines": {
+    "node": ">=22"
+  }
 }
