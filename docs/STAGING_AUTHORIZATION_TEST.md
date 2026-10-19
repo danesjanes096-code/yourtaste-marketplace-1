@@ -51,8 +51,10 @@ read -r -p "Customer A pending order UUID (blank to skip order checks): " SUPABA
 export SUPABASE_TEST_ORDER_A_ID
 
 npm run test:staging-authz
+status=$?
 unset SUPABASE_ANON_KEY SUPABASE_TEST_CUSTOMER_A_EMAIL SUPABASE_TEST_CUSTOMER_A_PASSWORD
 unset SUPABASE_TEST_CUSTOMER_B_EMAIL SUPABASE_TEST_CUSTOMER_B_PASSWORD SUPABASE_TEST_ADDRESS_A_ID SUPABASE_TEST_ORDER_A_ID
+exit "$status"
 ```
 
 Alternatively, supply short-lived JWTs as SUPABASE_TEST_CUSTOMER_A_JWT and SUPABASE_TEST_CUSTOMER_B_JWT instead of the email/password variables. Do not paste credentials or JWTs into chat, commit them, or place them in GitHub Actions logs.
