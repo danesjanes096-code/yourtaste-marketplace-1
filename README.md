@@ -14,7 +14,7 @@ YourTaste is an India-first multi-vendor marketplace foundation. This repository
 
 Authentication and seller flows are implemented in part but have not completed end-to-end staging acceptance. The checkout endpoint can create pending-payment orders and reserve inventory; **no payment provider is integrated and no money is charged**. Shipping, taxes, refunds, transactional notifications, mobile authentication/checkout, monitoring, backup/restore, and production deployment are not complete. Do not collect real customer data or process live orders with this version.
 
-See [production readiness gates](docs/PRODUCTION_READINESS.md) and the [staging test plan](docs/STAGING_TEST_PLAN.md).
+See [production readiness gates](docs/PRODUCTION_READINESS.md), the [staging test plan](docs/STAGING_TEST_PLAN.md), the [private pilot release checklist](docs/PRIVATE_PILOT_RELEASE_GATES.md), and the [payment/shipping provider shortlist](docs/PROVIDER_DECISIONS.md).
 
 ## Requirements and local development
 

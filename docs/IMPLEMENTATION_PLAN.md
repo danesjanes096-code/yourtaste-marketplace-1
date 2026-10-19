@@ -8,6 +8,7 @@
 - [ ] Reconcile every file with the staging workspace and pin dependency versions.
 - [x] Require CI green on a clean checkout for source verification, TypeScript typecheck, and Next.js production build.
 - [ ] Add a committed dependency lockfile and dependency/security scans; no lockfile is currently committed.
+- [x] Document provider shortlist for a future pilot: Cashfree Easy Split first to evaluate, Razorpay Route alternative; Shiprocket first to evaluate, Delhivery alternative. No provider account or paid service was enabled.
 
 ## Phase 2 — Identity and access
 

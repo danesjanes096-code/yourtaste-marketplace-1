@@ -29,3 +29,6 @@ Never commit `.env` files, Supabase service-role keys, payment secrets, webhook 
 ## Payments
 
 No live payment integration is enabled. Never use live payment credentials until signed webhooks, idempotency, refunds, reconciliation, late/duplicate events, and failure recovery are tested end to end.
+
+
+See also the [private pilot release gates](PRIVATE_PILOT_RELEASE_GATES.md) and [payment/shipping provider evaluation](PROVIDER_DECISIONS.md).
