@@ -8,7 +8,7 @@
 - [ ] Reconcile all web/mobile source against staging behavior and pin dependencies.
 - [ ] Apply migrations to a fresh disposable Supabase project and compare schema against staging.
 - [ ] Complete automated unit, integration, RLS/authorization, API, and end-to-end tests.
-- [x] Run the staging catalog smoke test for RLS coverage, checkout request grants, private helper grants, and privileged function search paths.
+- [x] Run the staging security/schema smoke test for RLS coverage, checkout request grants, private helper grants, privileged function search paths, 14 foreign-key indexes, and consolidated policy counts.
 - [ ] Complete JWT-based authorization tests and resolve or explicitly accept the remaining five Supabase SECURITY DEFINER advisor findings after code review.
 - [ ] Test Auth callbacks, email verification, password reset, abuse controls, and account recovery.
 - [ ] Implement payment-provider order creation, signed webhook verification, idempotent capture/refund handling, reconciliation, and late-payment behavior in sandbox.
