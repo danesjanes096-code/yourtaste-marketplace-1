@@ -22,7 +22,8 @@ This checklist is the release control for the current private-pilot approach. A 
 
 - [x] Staging security/schema smoke test checks RLS coverage, client privileges on checkout idempotency records, helper grants, SECURITY DEFINER search paths, index coverage, and selected policy counts.
 - [x] Staging SQL guard test rejects unauthenticated checkout/address RPCs and non-admin moderation calls using simulated JWT subject claims (`supabase/tests/authz_function_guards.sql`).
-- [ ] Run actual PostgREST requests with real JWTs as anonymous, customer A, customer B, seller A, seller B, and admin; SQL claim simulation is not a substitute.
+- [ ] Run `npm run test:staging-authz` with two real staging customer JWTs and known synthetic customer-A address/order IDs. The script refuses any URL except the approved staging project and never creates an order.
+- [ ] Extend the staged JWT run to seller A, seller B, and admin after synthetic seller/product fixtures exist; SQL claim simulation is not a substitute.
 - [ ] Confirm real non-admin JWTs cannot invoke moderation RPCs successfully, even with forged product/vendor IDs.
 - [ ] Confirm address/order ownership cannot be bypassed by changing IDs.
 - [ ] Test signup, email confirmation, login, logout, session expiry, password reset, and redirect allowlists.
@@ -67,5 +68,6 @@ This checklist is the release control for the current private-pilot approach. A 
 ## Current known blockers
 
 - Supabase security advisor reports five callable SECURITY DEFINER functions. Their function bodies include checks, but these must be tested with real JWT identities and reviewed rather than waived automatically.
+- The real-JWT staging suite is committed but not run yet; it requires synthetic staging accounts, customer-A address/order UUIDs, and their short-lived JWTs in the local shell environment.
 - Fresh disposable-project migration replay and full schema diff are outstanding.
 - Payment, shipping, tax/GST, notifications, monitoring, backup/restore, and production hosting are not finished.
