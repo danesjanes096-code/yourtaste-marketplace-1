@@ -27,7 +27,7 @@ jobs:
         run: npx expo install expo-constants expo-linking
       - name: Regenerate lockfile from workspace manifests
         run: |
-          rm -f package-lock.json
+          rm -rf node_modules apps/*/node_modules packages/*/node_modules package-lock.json
           npm install --package-lock-only --no-fund --no-audit
       - name: Commit lockfile and Expo compatibility adjustments before validation
         run: |
