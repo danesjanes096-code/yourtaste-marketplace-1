@@ -35,6 +35,10 @@ const nextConfig = fs.readFileSync('apps/web/next.config.mjs', 'utf8');
 for (const header of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy']) {
   if (!nextConfig.includes(header)) errors.push(`Security response header missing: ${header}`);
 }
+const authCallback = fs.readFileSync('apps/web/app/auth/callback/route.ts', 'utf8');
+for (const invariant of ['destination.origin !== base.origin', 'safeNext(request.nextUrl.searchParams.get("next"),request.url)']) {
+  if (!authCallback.includes(invariant)) errors.push(`Auth callback redirect invariant missing: ${invariant}`);
+}
 const checkout = fs.readFileSync('apps/web/app/api/checkout/orders/route.ts', 'utf8');
 for (const invariant of ['create_checkout_order', 'idempotencyKey', 'authentication_required']) {
   if (!checkout.includes(invariant)) errors.push(`Checkout invariant missing: ${invariant}`);
