@@ -1,0 +1,3 @@
+'use client';
+import {useState} from "react";import {useRouter} from "next/navigation";import {createSupabaseBrowserClient} from "@/lib/supabase/client";
+export default function SignOutButton(){const router=useRouter();const [busy,setBusy]=useState(false);async function signOut(){const supabase=createSupabaseBrowserClient();if(!supabase)return;setBusy(true);const {error}=await supabase.auth.signOut();setBusy(false);if(!error){router.replace("/");router.refresh();}}return <button type="button" disabled={busy} onClick={signOut} className="btn-outline disabled:opacity-60">{busy?"Signing out…":"Sign out"}</button>;}
