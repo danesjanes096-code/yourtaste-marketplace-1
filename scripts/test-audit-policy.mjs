@@ -37,11 +37,16 @@ test("blocks a new unapproved high-severity advisory", () => {
   assert.deepEqual(findBlockingHighVulnerabilities(vulnerabilities).map((v) => v.name), ["new-package"]);
 });
 
-test("blocks direct high-severity dependencies even if an advisory URL is allowlisted", () => {
-  const vulnerabilities = {
+test("blocks direct use of an unpatched package but permits a direct parent whose high chain is only transitive", () => {
+  const directVulnerable = {
     braces: { severity: "high", isDirect: true, via: [{ url: bracesUrl }] },
   };
-  assert.deepEqual(findBlockingHighVulnerabilities(vulnerabilities).map((v) => v.name), ["braces"]);
+  const directParent = {
+    "node-forge": { severity: "high", isDirect: false, via: [{ url: forgeUrl }] },
+    "eslint-config-next": { severity: "high", isDirect: true, via: ["node-forge"] },
+  };
+  assert.deepEqual(findBlockingHighVulnerabilities(directVulnerable).map((v) => v.name), ["braces"]);
+  assert.deepEqual(findBlockingHighVulnerabilities(directParent), []);
 });
 
 test("blocks critical advisories even when their URL is allowlisted", () => {

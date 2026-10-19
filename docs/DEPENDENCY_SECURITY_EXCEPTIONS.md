@@ -16,7 +16,7 @@ The CI dependency audit blocks all unapproved high/critical findings. Two adviso
 
 ## Controls and review
 
-- scripts/check-audit.mjs permits only these exact advisory URLs and only when they are transitive. Direct high-severity dependencies, critical findings, unknown chains, missing reports, or any other high/critical advisory fail CI.
+- scripts/check-audit.mjs permits only these exact advisory URLs and only through transitive chains. Direct use of braces/node-forge, critical findings, unknown chains, missing reports, or any other high/critical advisory fail CI.
 - scripts/test-audit-policy.mjs tests both allowed cases and fail-closed behavior.
 - Do not add a package override to a version that does not exist. The advisories currently have no patched releases; attempted overrides were removed after npm correctly rejected nonexistent versions.
 - Re-check the advisory pages before each pilot release and weekly until upstream patches are published. Remove each exception and its test fixture as soon as a patched release is available.

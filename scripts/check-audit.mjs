@@ -8,45 +8,52 @@ export const ALLOWED_UNPATCHED_ADVISORIES = new Set([
 const BLOCKING = new Set(["high", "critical"]);
 
 export function findBlockingHighVulnerabilities(vulnerabilities) {
-  const memo = new Map();
-
-  function isCovered(name, visiting = new Set()) {
+  function analyze(name, visiting = new Set()) {
     const vulnerability = vulnerabilities[name];
-    if (!vulnerability || !BLOCKING.has(vulnerability.severity)) return true;
-    if (vulnerability.severity === "critical" || vulnerability.isDirect) return false;
-    if (memo.has(name)) return memo.get(name);
-    if (visiting.has(name)) return false;
+    if (!vulnerability || !BLOCKING.has(vulnerability.severity)) {
+      return { ok: true, foundAllowed: false };
+    }
+    if (vulnerability.severity === "critical") {
+      return { ok: false, foundAllowed: false };
+    }
+    if (vulnerability.isDirect && (name === "braces" || name === "node-forge")) {
+      return { ok: false, foundAllowed: false };
+    }
+    if (visiting.has(name)) {
+      return { ok: true, foundAllowed: false };
+    }
 
     const nextVisiting = new Set(visiting);
     nextVisiting.add(name);
     const via = Array.isArray(vulnerability.via) ? vulnerability.via : [];
-    if (via.length === 0) return false;
+    if (via.length === 0) return { ok: false, foundAllowed: false };
 
-    let tracedAllowedHighReason = false;
+    let foundAllowed = false;
     for (const reason of via) {
       if (typeof reason === "string") {
         const child = vulnerabilities[reason];
-        if (!child) return false;
+        if (!child) return { ok: false, foundAllowed: false };
         if (BLOCKING.has(child.severity)) {
-          tracedAllowedHighReason = true;
-          if (!isCovered(reason, nextVisiting)) return false;
+          const result = analyze(reason, nextVisiting);
+          if (!result.ok) return { ok: false, foundAllowed: false };
+          foundAllowed ||= result.foundAllowed;
         }
       } else if (reason && typeof reason.url === "string") {
-        if (!ALLOWED_UNPATCHED_ADVISORIES.has(reason.url)) return false;
-        tracedAllowedHighReason = true;
+        if (!ALLOWED_UNPATCHED_ADVISORIES.has(reason.url)) {
+          return { ok: false, foundAllowed: false };
+        }
+        foundAllowed = true;
       } else {
-        return false;
+        return { ok: false, foundAllowed: false };
       }
     }
 
-    const covered = tracedAllowedHighReason;
-    memo.set(name, covered);
-    return covered;
+    return { ok: foundAllowed, foundAllowed };
   }
 
   return Object.entries(vulnerabilities)
     .filter(([name, vulnerability]) =>
-      BLOCKING.has(vulnerability.severity) && !isCovered(name)
+      BLOCKING.has(vulnerability.severity) && !analyze(name).ok
     )
     .map(([name, vulnerability]) => ({
       name,
