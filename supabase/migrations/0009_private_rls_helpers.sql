@@ -76,7 +76,7 @@ create policy "audit logs admin only" on public.audit_logs for select using ((se
 -- Replace the live checkout RPC with canonical idempotency hashing and a safe empty search_path.
 create or replace function public.create_checkout_order(p_address_id uuid,p_items jsonb,p_idempotency_key text)
 returns jsonb language plpgsql security definer set search_path=''
-as $
+as $$
 declare
  v_customer_id uuid:=auth.uid(); v_request_hash text; v_request public.checkout_requests%rowtype;
  v_address_snapshot jsonb; v_order_id uuid; v_order_number text; v_subtotal bigint:=0;
@@ -127,7 +127,6 @@ alter function public.guard_vendor_moderation_fields() set search_path='';
 alter function public.guard_product_publication() set search_path='';
 alter function public.admin_review_vendor(uuid,boolean,text) set search_path='';
 alter function public.admin_review_product(uuid,boolean,text) set search_path='';
-alter function public.create_checkout_order(uuid,jsonb,text) set search_path='';
 alter function public.release_expired_order_reservations() set search_path='';
 alter function public.save_customer_address(text,text,text,text,text,text,text,text,boolean) set search_path='';
 alter function public.set_default_customer_address(uuid) set search_path='';
@@ -174,7 +173,7 @@ alter function public.set_default_customer_address(uuid) set search_path='';
  from jsonb_to_recordset(v_lines) as x(product_id uuid,vendor_id uuid,quantity integer,unit_price_paise bigint,commission_paise bigint,sku_snapshot text,product_snapshot jsonb);
  update public.checkout_requests set order_id=v_order_id where id=v_request.id;
  return jsonb_build_object('orderId',v_order_id,'orderNumber',v_order_number,'status','pending_payment','totalPaise',v_subtotal,'currency','INR','paymentExpiresAt',now()+interval '15 minutes','reused',false);
-end; $;
+end; $$;
 
 alter function public.is_admin() set search_path='';
 alter function public.owns_vendor(uuid) set search_path='';
@@ -186,7 +185,6 @@ alter function public.guard_vendor_moderation_fields() set search_path='';
 alter function public.guard_product_publication() set search_path='';
 alter function public.admin_review_vendor(uuid,boolean,text) set search_path='';
 alter function public.admin_review_product(uuid,boolean,text) set search_path='';
-alter function public.create_checkout_order(uuid,jsonb,text) set search_path='';
 alter function public.release_expired_order_reservations() set search_path='';
 alter function public.save_customer_address(text,text,text,text,text,text,text,text,boolean) set search_path='';
 alter function public.set_default_customer_address(uuid) set search_path='';
