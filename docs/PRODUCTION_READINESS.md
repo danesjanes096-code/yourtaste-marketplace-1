@@ -4,10 +4,12 @@
 
 ## Release blockers
 
-- [ ] Publish and review all web, mobile, API, and Supabase migration source from the staging foundation.
+- [x] Publish and align the ten timestamped migration files with the staging migration history.
+- [ ] Reconcile all web/mobile source against staging behavior and pin dependencies.
 - [ ] Apply migrations to a fresh disposable Supabase project and compare schema against staging.
 - [ ] Complete automated unit, integration, RLS/authorization, API, and end-to-end tests.
-- [ ] Independently review RLS policies, SECURITY DEFINER functions, grants, service-role usage, and admin bootstrap.
+- [x] Run the staging catalog smoke test for RLS coverage, checkout request grants, private helper grants, and privileged function search paths.
+- [ ] Complete JWT-based authorization tests and resolve or explicitly accept the remaining five Supabase SECURITY DEFINER advisor findings after code review.
 - [ ] Test Auth callbacks, email verification, password reset, abuse controls, and account recovery.
 - [ ] Implement payment-provider order creation, signed webhook verification, idempotent capture/refund handling, reconciliation, and late-payment behavior in sandbox.
 - [ ] Schedule and monitor expiry of stock reservations.
