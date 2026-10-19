@@ -29,8 +29,9 @@ Use synthetic accounts and test payment credentials only. Never use real custome
 
 ## Release and recovery
 
-- [ ] `npm run verify:source`, `npm run typecheck`, and `npm run build:web` pass on clean checkout.
-- [ ] Database migrations apply to a fresh disposable project and schema diff is reviewed.
+- [x] `npm run verify:source`, `npm run typecheck`, and `npm run build:web` pass in GitHub Actions on the current commit. See the [CI run](https://github.com/danesjanes096-code/yourtaste-marketplace-1/actions).
+- [x] All ten timestamped migrations are recorded on staging; `supabase/tests/security_smoke.sql` passes against the live staging catalog.
+- [ ] Apply the migration chain to a fresh disposable project and review a full schema diff.
 - [ ] Backup restoration and deployment rollback are rehearsed.
 - [ ] Error alerts, uptime checks and operational runbook are verified.
 - [ ] Android/iOS builds are installed and tested on real devices.
