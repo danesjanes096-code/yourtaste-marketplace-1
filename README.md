@@ -6,9 +6,9 @@ YourTaste is an India-first multi-vendor marketplace foundation. This repository
 
 - Web: responsive storefront, Supabase Auth forms, account and address-book routes, seller application/product submission, moderation queue, catalogue API, and pending-order API.
 - Mobile: Expo/React Native catalogue UI with optional live catalogue API connection and a local in-memory bag counter.
-- Database: nine versioned migration files, including a pending private-schema/RLS helper hardening migration.
+- Database: ten timestamped Supabase migrations. Migrations through `20261019203635_checkout_hardening` are recorded on staging.
 - CI: GitHub Actions source verification, TypeScript typecheck, and Next.js production build.
-- Staging: the live Supabase project records migrations 0001–0008. Migration 0009 is committed but has not yet been applied. A fresh-database migration run and schema diff are still required.
+- Staging: ten migrations are recorded, including private-schema RLS helpers, explicit denial policy for client access to checkout idempotency records, canonical cart hashing, and empty search paths for privileged functions. Fresh-project migration testing and a full schema diff are still required.
 
 ## Not production-ready
 
