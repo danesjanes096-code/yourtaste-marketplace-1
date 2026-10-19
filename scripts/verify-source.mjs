@@ -1,9 +1,40 @@
 import fs from 'node:fs';
 import path from 'node:path';
-const required = ['README.md', '.env.example', 'package.json', 'apps/web/package.json', 'apps/web/app/page.tsx', 'apps/web/app/layout.tsx', 'apps/mobile/app/index.tsx', 'packages/shared/src/index.ts', '.github/workflows/ci.yml'];
-const errors = required.filter((p) => !fs.existsSync(path.resolve(p))).map((p) => `Missing required file: ${p}`);
+
+const required = [
+  'README.md', '.env.example', 'package.json', 'apps/web/package.json',
+  'apps/web/app/page.tsx', 'apps/web/app/layout.tsx',
+  'apps/web/app/auth/sign-in/SignInForm.tsx', 'apps/web/app/auth/sign-up/SignUpForm.tsx',
+  'apps/web/app/account/addresses/AddressBook.tsx', 'apps/web/app/api/products/route.ts',
+  'apps/web/app/api/checkout/orders/route.ts', 'apps/web/middleware.ts',
+  'apps/mobile/app/index.tsx', 'packages/shared/src/index.ts',
+  '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md',
+  ...Array.from({ length: 8 }, (_, i) => `supabase/migrations/${String(i + 1).padStart(4, '0')}_${[
+    'marketplace_core.sql', 'signup_catalogue_guards.sql', 'checkout_order_rpc.sql',
+    'vendor_product_permissions.sql', 'admin_moderation_rpcs.sql',
+    'customer_address_book.sql', 'security_definer_grants_hardening.sql',
+    'seed_marketplace_categories.sql'
+  ][i]}`)
+];
+const errors = required.filter((file) => !fs.existsSync(path.resolve(file))).map((file) => `Missing required file: ${file}`);
 const envExample = fs.readFileSync('.env.example', 'utf8');
 if (!envExample.includes('NEXT_PUBLIC_SUPABASE_URL=')) errors.push('Missing Supabase URL placeholder.');
-if (!envExample.includes('SUPABASE_SERVICE_ROLE_KEY=')) errors.push('Missing server-only service role placeholder.');
-for (const file of ['.env', '.env.local', '.env.production']) if (fs.existsSync(file)) errors.push(`Refusing to verify with local secret file present: ${file}`);
-if (errors.length) { console.error('YourTaste source verification failed:'); for (const e of errors) console.error(`- ${e}`); process.exitCode = 1; } else console.log(`YourTaste repository structure verified (${required.length} required files).`);
+if (!envExample.includes('SUPABASE_SERVICE_ROLE_KEY=')) errors.push('Missing server-only service-role placeholder.');
+for (const file of ['.env', '.env.local', '.env.production']) {
+  if (fs.existsSync(file)) errors.push(`Refusing to verify with local secret file present: ${file}`);
+}
+const checkout = fs.readFileSync('apps/web/app/api/checkout/orders/route.ts', 'utf8');
+for (const invariant of ['create_checkout_order', 'idempotencyKey', 'authentication_required']) {
+  if (!checkout.includes(invariant)) errors.push(`Checkout invariant missing: ${invariant}`);
+}
+const migrations = fs.readFileSync('supabase/migrations/0003_checkout_order_rpc.sql', 'utf8');
+for (const invariant of ['create_checkout_order', 'release_expired_order_reservations', 'idempotency_key_reused_with_different_request']) {
+  if (!migrations.includes(invariant)) errors.push(`Checkout migration invariant missing: ${invariant}`);
+}
+if (errors.length) {
+  console.error('YourTaste source verification failed:');
+  for (const error of errors) console.error(`- ${error}`);
+  process.exitCode = 1;
+} else {
+  console.log(`YourTaste repository structure and checkout invariants verified (${required.length} required files).`);
+}
