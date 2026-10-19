@@ -20,7 +20,8 @@ const required = [
     '20261019200058_seed_marketplace_categories.sql',
     '20261019203501_private_rls_helpers.sql',
     '20261019203635_checkout_hardening.sql',
-    '20261019204339_performance_fk_indexes.sql'
+    '20261019204339_performance_fk_indexes.sql',
+    '20261019204454_rls_policy_consolidation.sql'
   ].map((name) => `supabase/migrations/${name}`)
 ];
 const errors = required.filter((file) => !fs.existsSync(path.resolve(file))).map((file) => `Missing required file: ${file}`);
