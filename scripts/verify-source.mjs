@@ -9,12 +9,18 @@ const required = [
   'apps/web/app/api/checkout/orders/route.ts', 'apps/web/middleware.ts',
   'apps/mobile/app/index.tsx', 'packages/shared/src/index.ts',
   '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md',
-  ...Array.from({ length: 8 }, (_, i) => `supabase/migrations/${String(i + 1).padStart(4, '0')}_${[
-    'marketplace_core.sql', 'signup_catalogue_guards.sql', 'checkout_order_rpc.sql',
-    'vendor_product_permissions.sql', 'admin_moderation_rpcs.sql',
-    'customer_address_book.sql', 'security_definer_grants_hardening.sql',
-    'seed_marketplace_categories.sql'
-  ][i]}`)
+  ...[
+    '20261019195925_marketplace_core.sql',
+    '20261019195937_signup_catalogue_guards.sql',
+    '20261019195955_checkout_order_rpc.sql',
+    '20261019195958_vendor_product_permissions.sql',
+    '20261019200006_admin_moderation_rpcs.sql',
+    '20261019200014_customer_address_book.sql',
+    '20261019200036_security_definer_grants_hardening.sql',
+    '20261019200058_seed_marketplace_categories.sql',
+    '20261019203501_private_rls_helpers.sql',
+    '20261019203635_checkout_hardening.sql'
+  ].map((name) => `supabase/migrations/${name}`)
 ];
 const errors = required.filter((file) => !fs.existsSync(path.resolve(file))).map((file) => `Missing required file: ${file}`);
 const envExample = fs.readFileSync('.env.example', 'utf8');
@@ -27,9 +33,13 @@ const checkout = fs.readFileSync('apps/web/app/api/checkout/orders/route.ts', 'u
 for (const invariant of ['create_checkout_order', 'idempotencyKey', 'authentication_required']) {
   if (!checkout.includes(invariant)) errors.push(`Checkout invariant missing: ${invariant}`);
 }
-const migrations = fs.readFileSync('supabase/migrations/0003_checkout_order_rpc.sql', 'utf8');
+const migrations = fs.readFileSync('supabase/migrations/20261019195955_checkout_order_rpc.sql', 'utf8');
 for (const invariant of ['create_checkout_order', 'release_expired_order_reservations', 'idempotency_key_reused_with_different_request']) {
   if (!migrations.includes(invariant)) errors.push(`Checkout migration invariant missing: ${invariant}`);
+}
+const hardening = fs.readFileSync('supabase/migrations/20261019203635_checkout_hardening.sql', 'utf8');
+for (const invariant of ['extensions.digest', 'deny client access to checkout requests', "set search_path TO ''"]) {
+  if (!hardening.toLowerCase().includes(invariant.toLowerCase())) errors.push(`Checkout hardening invariant missing: ${invariant}`);
 }
 if (errors.length) {
   console.error('YourTaste source verification failed:');
