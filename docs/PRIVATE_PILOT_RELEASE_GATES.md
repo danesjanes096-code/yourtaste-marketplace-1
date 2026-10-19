@@ -29,7 +29,8 @@ This checklist is the release control for the current private-pilot approach. A 
 - [ ] Confirm address/order ownership cannot be bypassed by changing IDs.
 - [ ] Test signup, email confirmation, login, logout, session expiry, password reset, and redirect allowlists.
 - [ ] Add rate limiting and abuse protection to auth, checkout, seller application, product submission, and upload flows.
-- [ ] Review and close/justify Supabase security advisor warnings for the five SECURITY DEFINER RPCs.
+- [x] Review and document why the five SECURITY DEFINER RPCs are intentionally callable by authenticated users, including their grants, empty search_path, and in-function authorization checks (SECURITY_DEFINER_REVIEW.md).
+- [ ] Complete real-JWT negative/positive tests before treating the advisor findings as accepted for pilot.
 
 ## Gate 3 — catalogue and seller operations
 
