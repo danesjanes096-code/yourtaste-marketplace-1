@@ -1,0 +1,1 @@
+export default function SignInPage() { return <main className="section"><p className="eyebrow">Your account</p><h1>Sign-in is being prepared.</h1><p>Authentication is not enabled in this initial repository snapshot. Do not enter real customer credentials here.</p><p><a href="/">← Back to the marketplace</a></p></main>; }
