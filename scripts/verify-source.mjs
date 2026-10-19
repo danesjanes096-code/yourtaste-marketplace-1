@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const required = [
-  'README.md', '.env.example', 'package.json', 'apps/web/package.json',
+  'README.md', '.env.example', 'package.json', 'package-lock.json', 'apps/web/package.json',
   'apps/web/app/page.tsx', 'apps/web/app/layout.tsx',
   'apps/web/app/auth/sign-in/SignInForm.tsx', 'apps/web/app/auth/sign-up/SignUpForm.tsx',
   'apps/web/app/account/addresses/AddressBook.tsx', 'apps/web/app/api/products/route.ts',
@@ -36,6 +36,9 @@ for (const header of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Pol
   if (!nextConfig.includes(header)) errors.push(`Security response header missing: ${header}`);
 }
 const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+const packageLock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+if (packageLock.lockfileVersion !== 3) errors.push('Expected npm lockfileVersion 3.');
+if (!Array.isArray(packageLock.packages?.['']?.workspaces) || packageLock.packages[''].workspaces.length === 0) errors.push('Dependency lockfile is missing root workspace metadata.');
 if (packageJson.scripts?.['test:security'] !== 'node --test scripts/test-auth-redirect.mjs') errors.push('Security redirect test script is missing.');
 const authCallback = fs.readFileSync('apps/web/app/auth/callback/route.ts', 'utf8');
 for (const invariant of ['safeNext', 'request.nextUrl.searchParams.get("next")']) {
