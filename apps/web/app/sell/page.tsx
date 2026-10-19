@@ -1,1 +1,2 @@
-export default function SellPage() { return <main className="section"><p className="eyebrow">Seller community</p><h1>Build your business with YourTaste.</h1><p>Seller onboarding is not yet connected in this repository snapshot. We are preparing the verified application and moderation flow for staging.</p><p><a href="/">← Back to the marketplace</a></p></main>; }
+import Link from "next/link";
+export default function SellPage() { return <main className="section"><p className="eyebrow">Seller community</p><h1>Build your business with YourTaste.</h1><p>Seller onboarding is not yet connected in this repository snapshot. We are preparing the verified application and moderation flow for staging.</p><p><Link href="/">← Back to the marketplace</Link></p></main>; }

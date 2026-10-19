@@ -4,8 +4,9 @@
 
 ## Release blockers
 
-- [x] Publish and align the ten timestamped migration files with the staging migration history.
-- [ ] Reconcile all web/mobile source against staging behavior and pin dependencies.
+- [x] Publish and align the twelve timestamped migration files with the staging migration history.
+- [x] Commit a reproducible npm workspace lockfile and upgrade web/mobile framework dependencies; clean install, ESLint, typecheck, web build, Expo Doctor, and Android bundle export pass on the dependency-upgrade branch.
+- [ ] Reconcile all web/mobile source against staging behavior.
 - [ ] Apply migrations to a fresh disposable Supabase project and compare schema against staging.
 - [ ] Complete automated unit, integration, RLS/authorization, API, and end-to-end tests.
 - [x] Run the staging security/schema smoke test for RLS coverage, checkout request grants, private helper grants, privileged function search paths, 14 foreign-key indexes, and consolidated policy counts.

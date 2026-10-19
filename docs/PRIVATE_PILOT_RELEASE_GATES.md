@@ -14,8 +14,8 @@ This checklist is the release control for the current private-pilot approach. A 
 ## Gate 1 — code and supply chain
 
 - [x] GitHub Actions source verification, TypeScript typecheck, and Next.js production build pass on the current recorded run.
-- [x] Commit a reproducible npm workspace lockfile and pass CI with `npm ci`, source verification, security tests, typecheck, and production build.
-- [x] Add `npm audit --audit-level=high` to CI so high/critical dependency advisories fail the pipeline.
+- [x] Commit a reproducible npm workspace lockfile and pass clean-install checks, dependency audit policy, security tests, ESLint, typecheck, Next.js production build, Expo Doctor, and Android bundle export.
+- [x] Add a CI audit policy that blocks unapproved high/critical dependency advisories. Two upstream-unpatched transitive build-tool advisories are narrowly allowlisted and documented in DEPENDENCY_SECURITY_EXCEPTIONS.md; policy tests run in CI.
 - [ ] Enable/verify GitHub secret scanning and push protection in repository security settings; this cannot be enabled safely through source changes alone.
 - [ ] Run the full source verification from a clean checkout and verify no secrets or local artifacts are committed.
 
@@ -69,6 +69,7 @@ This checklist is the release control for the current private-pilot approach. A 
 ## Current known blockers
 
 - Supabase security advisor reports five callable SECURITY DEFINER functions. Their function bodies include checks, but these must be tested with real JWT identities and reviewed rather than waived automatically.
+- Two high-severity advisories remain upstream-unpatched in transitive Expo build tooling (braces, node-forge); the exact GHSA exceptions are tested, documented, and must be re-reviewed when upstream fixes ship.
 - The real-JWT staging suite is committed but not run yet; it requires synthetic staging accounts, customer-A address/order UUIDs, and their short-lived JWTs in the local shell environment.
 - Fresh disposable-project migration replay and full schema diff are outstanding.
 - Payment, shipping, tax/GST, notifications, monitoring, backup/restore, and production hosting are not finished.

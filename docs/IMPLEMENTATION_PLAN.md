@@ -6,8 +6,8 @@
 - [x] Publish initial responsive storefront and mobile shell.
 - [x] Publish initial Supabase schema/RLS and checkout/order migrations.
 - [ ] Reconcile every file with the staging workspace and pin dependency versions.
-- [x] Require CI green on a clean checkout for source verification, TypeScript typecheck, and Next.js production build.
-- [ ] Add a committed dependency lockfile and dependency/security scans; no lockfile is currently committed.
+- [x] Require clean-checkout CI for source verification, dependency audit policy, security tests, ESLint, TypeScript typecheck, Next.js production build, Expo Doctor, and Android bundle export.
+- [x] Commit the npm workspace lockfile and add a tested dependency-audit policy. Two upstream-unpatched high-severity advisories in transitive build tooling are narrowly allowlisted and documented.
 - [x] Document provider shortlist for a future pilot: Cashfree Easy Split first to evaluate, Razorpay Route alternative; Shiprocket first to evaluate, Delhivery alternative. No provider account or paid service was enabled.
 
 ## Phase 2 — Identity and access
