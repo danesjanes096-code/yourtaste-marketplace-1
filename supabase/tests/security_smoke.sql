@@ -64,6 +64,13 @@ begin
     'shipments_order_id_fk_idx','shipments_vendor_id_fk_idx'
   );
   if v_index_count <> 14 then raise exception 'Expected 14 foreign-key indexes; found %', v_index_count; end if;
+
+  if (select count(*) from pg_policies where schemaname='public' and tablename='orders' and cmd='SELECT') <> 1 then
+    raise exception 'Expected one consolidated orders SELECT policy';
+  end if;
+  if (select count(*) from pg_policies where schemaname='public' and tablename='profiles' and cmd='UPDATE') <> 1 then
+    raise exception 'Expected one consolidated profiles UPDATE policy';
+  end if;
 end $$;
 
 select 'YourTaste staging security/schema smoke test passed' as result;
