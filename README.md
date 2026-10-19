@@ -8,7 +8,7 @@ YourTaste is an India-first multi-vendor marketplace project. This GitHub reposi
 - Mobile: Expo/React Native catalogue UI with illustrative sample listings.
 - Shared package: TypeScript domain primitives.
 - CI: initial GitHub Actions workflow for source checks, typecheck, and web build.
-- Supabase staging: a separate staging project exists, but the full migration set and staging-integrated application source still need to be published and reconciled in this repository.
+- Supabase staging: eight migrations are recorded on the live staging project. The ninth security-hardening migration is committed here but has not yet been applied; exact source/schema parity still needs a fresh-database diff.
 
 **Not production-ready.** Authentication, seller workflows, persistent cart, order lifecycle, payment processing, shipping, taxes, refunds, and mobile release flows are not enabled in this scaffold. Do not collect real customer data or process payments with this version. See [production readiness gates](docs/PRODUCTION_READINESS.md).
 
