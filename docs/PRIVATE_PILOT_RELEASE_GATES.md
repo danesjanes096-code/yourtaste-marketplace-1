@@ -15,7 +15,8 @@ This checklist is the release control for the current private-pilot approach. A 
 
 - [x] GitHub Actions source verification, TypeScript typecheck, and Next.js production build pass on the current recorded run.
 - [x] Commit a reproducible npm workspace lockfile and pass CI with `npm ci`, source verification, security tests, typecheck, and production build.
-- [ ] Add dependency vulnerability scanning and secret scanning; review advisories before upgrades.
+- [x] Add `npm audit --audit-level=high` to CI so high/critical dependency advisories fail the pipeline.
+- [ ] Enable/verify GitHub secret scanning and push protection in repository security settings; this cannot be enabled safely through source changes alone.
 - [ ] Run the full source verification from a clean checkout and verify no secrets or local artifacts are committed.
 
 ## Gate 2 — identity and authorization
