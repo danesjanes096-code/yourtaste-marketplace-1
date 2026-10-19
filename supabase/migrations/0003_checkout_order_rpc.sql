@@ -47,7 +47,10 @@ begin
  if p_idempotency_key is null or p_idempotency_key !~ '^[A-Za-z0-9._:-]{16,128}$' then
    raise exception using errcode='22023', message='invalid_idempotency_key';
  end if;
- if jsonb_typeof(p_items) <> 'array' or jsonb_array_length(p_items) < 1 or jsonb_array_length(p_items) > 30 then
+ if p_items is null or jsonb_typeof(p_items) is distinct from 'array' then
+   raise exception using errcode='22023', message='invalid_cart';
+ end if;
+ if jsonb_array_length(p_items) < 1 or jsonb_array_length(p_items) > 30 then
    raise exception using errcode='22023', message='invalid_cart';
  end if;
  if exists(select 1 from jsonb_array_elements(p_items) x where jsonb_typeof(x) <> 'object'
