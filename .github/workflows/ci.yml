@@ -17,7 +17,9 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Audit dependency vulnerabilities
-        run: npm audit --audit-level=high
+        run: |
+          npm audit --json > /tmp/npm-audit.json || true
+          node scripts/check-audit.mjs /tmp/npm-audit.json
       - run: npm run verify:source
       - run: npm run test:security
       - run: npm run typecheck
