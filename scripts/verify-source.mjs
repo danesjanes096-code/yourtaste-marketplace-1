@@ -35,6 +35,8 @@ const nextConfig = fs.readFileSync('apps/web/next.config.mjs', 'utf8');
 for (const header of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy']) {
   if (!nextConfig.includes(header)) errors.push(`Security response header missing: ${header}`);
 }
+const ciWorkflow = fs.readFileSync('.github/workflows/ci.yml', 'utf8');
+if (!ciWorkflow.includes('npm audit --audit-level=high')) errors.push('CI dependency vulnerability audit is missing.');
 const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 if (packageJson.scripts?.['test:staging-authz'] !== 'node scripts/test-staging-authorization.mjs') errors.push('Missing opt-in staging JWT authorization test command.');
 const packageLock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
