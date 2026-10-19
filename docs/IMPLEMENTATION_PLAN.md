@@ -6,13 +6,15 @@
 - [x] Publish initial responsive storefront and mobile shell.
 - [x] Publish initial Supabase schema/RLS and checkout/order migrations.
 - [ ] Reconcile every file with the staging workspace and pin dependency versions.
-- [ ] Require CI green on a clean checkout; add lockfile and dependency/security scans.
+- [x] Require CI green on a clean checkout for source verification, TypeScript typecheck, and Next.js production build.
+- [ ] Add a committed dependency lockfile and dependency/security scans; no lockfile is currently committed.
 
 ## Phase 2 — Identity and access
 
 - [ ] Verify Supabase Auth email confirmation and redirect URLs in staging.
-- [ ] Review profile bootstrap trigger, role changes, seller access and admin bootstrap.
+- [x] Review profile bootstrap trigger, role changes, seller access and admin bootstrap design; runtime authorization tests remain open.
 - [ ] Test every RLS policy as anon, customer A/B, seller A/B, and admin.
+- [x] Add and run a staging catalog smoke test for RLS coverage, checkout idempotency-table grants, private helper grants, and privileged function search paths.
 - [ ] Add password reset and abuse/rate-limit protections.
 
 ## Phase 3 — Catalogue and sellers
