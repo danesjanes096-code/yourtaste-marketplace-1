@@ -10,7 +10,7 @@ export async function GET(request:NextRequest){
  if(!Number.isSafeInteger(from)||from>10000000)return NextResponse.json({error:"invalid_page",message:"Requested page is too large."},{status:400});
  const supabase=createClient(supabaseUrl,anonKey,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false},global:{headers:{"X-Client-Info":"yourtaste-catalog-api"}}});
  let query=supabase.from("products").select("id,title,slug,description,sku,price_paise,compare_at_price_paise,currency,stock_quantity,images,created_at,category:categories!inner(id,name,slug),vendor:vendors!inner(id,store_name,slug)",{count:"exact"});
- if(search)query=query.textSearch("title",{websearch:search},{type:"websearch",config:"simple"});
+ if(search)query=query.textSearch("title",search,{type:"websearch",config:"simple"});
  if(category)query=query.eq("category.slug",category);
  switch(sort){case "price_asc":query=query.order("price_paise",{ascending:true});break;case "price_desc":query=query.order("price_paise",{ascending:false});break;default:query=query.order("created_at",{ascending:false});}
  const {data,error,count}=await query.range(from,from+pageSize-1);
