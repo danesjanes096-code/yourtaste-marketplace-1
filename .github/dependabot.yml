@@ -4,6 +4,11 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    allow:
+      - dependency-type: all
+        update-types:
+          - version-update:semver-patch
+          - version-update:semver-minor
     open-pull-requests-limit: 5
     labels:
       - dependencies
