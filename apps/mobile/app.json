@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "YourTaste",
+    "slug": "yourtaste",
+    "scheme": "yourtaste",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#175e4b"
+      },
+      "package": "com.yourtaste.marketplace"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}
