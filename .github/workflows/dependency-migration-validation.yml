@@ -22,8 +22,13 @@ jobs:
       - name: Align native dependencies with Expo SDK
         working-directory: apps/mobile
         run: npx expo install --fix
-      - name: Refresh lockfile
-        run: npm install --no-fund --no-audit
+      - name: Install required Expo Router peer dependencies
+        working-directory: apps/mobile
+        run: npx expo install expo-constants expo-linking
+      - name: Refresh and deduplicate lockfile
+        run: |
+          npm install --no-fund --no-audit
+          npm dedupe --no-fund --no-audit
       - name: Commit lockfile and Expo compatibility adjustments before validation
         run: |
           git config user.name "github-actions[bot]"
