@@ -20,7 +20,6 @@
     "node": ">=22"
   },
   "overrides": {
-    "braces": "3.0.4",
-    "node-forge": "1.4.1"
+    "braces": "3.0.4"
   }
 }
