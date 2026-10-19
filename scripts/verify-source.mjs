@@ -31,6 +31,10 @@ if (!envExample.includes('SUPABASE_SERVICE_ROLE_KEY=')) errors.push('Missing ser
 for (const file of ['.env', '.env.local', '.env.production']) {
   if (fs.existsSync(file)) errors.push(`Refusing to verify with local secret file present: ${file}`);
 }
+const nextConfig = fs.readFileSync('apps/web/next.config.mjs', 'utf8');
+for (const header of ['X-Content-Type-Options', 'X-Frame-Options', 'Referrer-Policy', 'Permissions-Policy']) {
+  if (!nextConfig.includes(header)) errors.push(`Security response header missing: ${header}`);
+}
 const checkout = fs.readFileSync('apps/web/app/api/checkout/orders/route.ts', 'utf8');
 for (const invariant of ['create_checkout_order', 'idempotencyKey', 'authentication_required']) {
   if (!checkout.includes(invariant)) errors.push(`Checkout invariant missing: ${invariant}`);
