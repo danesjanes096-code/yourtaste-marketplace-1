@@ -51,7 +51,7 @@ test("staging authorization harness refuses a different Supabase project before 
 test("staging authorization harness refuses a secret API key before network access", () => {
   const result = run(validConfig({ SUPABASE_ANON_KEY: "sb_secret_not-a-real-key" }));
   assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /service-role\/secret API keys are refused|service-role\/secret API key is refused/i);
+  assert.match(result.stderr, /service-role keys are refused/);
   assert.doesNotMatch(result.stdout + result.stderr, /fetch failed|ENOTFOUND|ECONNREFUSED/);
 });
 
@@ -59,7 +59,7 @@ test("staging authorization harness refuses a service-role JWT API key", () => {
   const payload = Buffer.from(JSON.stringify({ role: "service_role" })).toString("base64url");
   const result = run(validConfig({ SUPABASE_ANON_KEY: "eyJhbGciOiJub25lIn0." + payload + ".test-only" }));
   assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /service-role\/secret API keys are refused|service-role\/secret API key is refused/i);
+  assert.match(result.stderr, /service-role keys are refused/);
 });
 
 test("staging authorization harness refuses malformed address fixture IDs before sign-in", () => {
