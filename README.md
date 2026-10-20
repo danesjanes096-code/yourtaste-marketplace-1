@@ -2,6 +2,21 @@
 
 YourTaste is an India-first multi-vendor marketplace foundation. This repository is an actively developed staging scaffold, not a production release.
 
+## Local database validation
+
+The database replay workflow starts an isolated local Supabase stack, applies every migration to an empty database, and runs the SQL security/schema smoke tests. It does not connect to the hosted staging project and needs no Supabase secrets.
+
+For local use, install Docker and the Supabase CLI, then run:
+
+```bash
+supabase start
+supabase db reset
+psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/security_smoke.sql
+psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/authz_function_guards.sql
+```
+
+Never use `supabase db reset --linked` against staging or production; the linked reset is destructive.
+
 ## Current status
 
 - Web: responsive storefront, Supabase Auth forms, account and address-book routes, seller application/product submission, moderation queue, catalogue API, and pending-order API.
