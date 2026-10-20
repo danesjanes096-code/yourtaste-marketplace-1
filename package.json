@@ -13,7 +13,7 @@
     "dev:mobile": "npm --workspace apps/mobile run start",
     "typecheck": "npm --workspace apps/web run typecheck",
     "verify:source": "node scripts/verify-source.mjs",
-    "test:security": "node --test scripts/test-auth-redirect.mjs scripts/test-audit-policy.mjs",
+    "test:security": "node --test scripts/test-auth-redirect.mjs scripts/test-audit-policy.mjs scripts/test-staging-authorization-guards.mjs",
     "test:staging-authz": "node scripts/test-staging-authorization.mjs"
   },
   "engines": {

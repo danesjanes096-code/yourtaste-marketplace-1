@@ -1,6 +1,6 @@
 # Staging authorization test runbook
 
-This test makes real PostgREST requests to the approved YourTaste staging project. It refuses any other project URL and rejects a service-role/secret API key. It does not create orders or write test rows; it only attempts calls that must be denied and reads synthetic fixtures.
+This test makes real PostgREST requests to the approved YourTaste staging project. Its local fail-closed guards are covered by `npm run test:security`; those tests deliberately stop before any network request. It refuses any other project URL and rejects a service-role/secret API key. It does not create orders or write test rows; it only attempts calls that must be denied and reads synthetic fixtures.
 
 ## 1. Create synthetic fixtures
 
