@@ -12,7 +12,10 @@ For local use, install Docker and the Supabase CLI, then run:
 supabase start
 supabase db reset
 psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/security_smoke.sql
-psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/authz_function_guards.sql\neval "$(supabase status -o env)"\nexport API_URL ANON_KEY SERVICE_ROLE_KEY\nnode scripts/test-local-postgrest-authz.mjs
+psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/authz_function_guards.sql
+eval "$(supabase status -o env)"
+export API_URL ANON_KEY SERVICE_ROLE_KEY
+node scripts/test-local-postgrest-authz.mjs
 ```
 
 Never use `supabase db reset --linked` against staging or production; the linked reset is destructive.
