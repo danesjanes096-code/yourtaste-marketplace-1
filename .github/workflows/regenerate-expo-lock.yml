@@ -1,0 +1,36 @@
+name: Regenerate Expo lockfile
+
+on:
+  push:
+    branches: [automation/database-migration-replay]
+    paths:
+      - "apps/mobile/package.json"
+      - ".github/workflows/regenerate-expo-lock.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: automation/database-migration-replay
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Regenerate workspace lockfile
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Commit updated lockfile
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "Lockfile already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore: refresh Expo SDK patch lockfile"
+          git push origin HEAD:automation/database-migration-replay
