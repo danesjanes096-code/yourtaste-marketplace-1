@@ -4,7 +4,7 @@ YourTaste is an India-first multi-vendor marketplace foundation. This repository
 
 ## Local database validation
 
-The database replay workflow starts an isolated local Supabase stack, applies every migration to an empty database, runs the SQL security/schema smoke tests, and performs signed-JWT requests against local PostgREST using disposable test users. It does not connect to the hosted staging project and needs no hosted Supabase secrets. It does not connect to the hosted staging project and needs no Supabase secrets.
+The database replay workflow starts an isolated local Supabase stack, applies every migration to an empty database, runs the SQL security/schema and ownership tests, and performs signed-JWT requests against local PostgREST using disposable test users. It never connects to hosted staging and needs no hosted Supabase secrets.
 
 For local use, install Docker and the Supabase CLI, then run:
 
@@ -12,7 +12,11 @@ For local use, install Docker and the Supabase CLI, then run:
 supabase start
 supabase db reset
 psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/security_smoke.sql
-psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/authz_function_guards.sql\neval "$(supabase status -o env)"\nexport API_URL ANON_KEY SERVICE_ROLE_KEY\nnode scripts/test-local-postgrest-authz.mjs
+psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/authz_function_guards.sql
+psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -v ON_ERROR_STOP=1 -f supabase/tests/rls_ownership.sql
+eval "$(supabase status -o env)"
+export API_URL ANON_KEY SERVICE_ROLE_KEY
+node scripts/test-local-postgrest-authz.mjs
 ```
 
 Never use `supabase db reset --linked` against staging or production; the linked reset is destructive.
