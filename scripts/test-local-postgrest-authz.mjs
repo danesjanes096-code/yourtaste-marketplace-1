@@ -134,6 +134,11 @@ try {
     assert.equal(result.ok, true, "RLS should filter the row rather than fail the read.");
     assert.ok(Array.isArray(result.data)); assert.equal(result.data.length, 0, "RLS exposed another customer's address.");
   });
+  await check("customer B cannot read customer A's profile through RLS", async () => {
+    const result = await request("/rest/v1/profiles?select=id&id=eq." + encodeURIComponent(customerA.id), { token: customerB.token });
+    assert.equal(result.ok, true, "RLS should filter the profile rather than fail the read.");
+    assert.ok(Array.isArray(result.data)); assert.equal(result.data.length, 0, "RLS exposed another customer's profile.");
+  });
   await check("customer A can read their own order through PostgREST", async () => {
     const result = await request("/rest/v1/orders?select=id&id=eq." + encodeURIComponent(orderA), { token: customerA.token });
     assert.equal(result.ok, true, "Customer A order read failed (HTTP " + result.status + ").");
