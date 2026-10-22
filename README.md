@@ -4,7 +4,7 @@ YourTaste is an India-first multi-vendor marketplace foundation. This repository
 
 ## Local database validation
 
-The database replay workflow starts an isolated local Supabase stack, applies every migration to an empty database, runs the SQL security/schema smoke tests, and performs signed-JWT requests against local PostgREST using disposable test users. It does not connect to the hosted staging project and needs no hosted Supabase secrets. It does not connect to the hosted staging project and needs no Supabase secrets.
+The database replay workflow starts an isolated local Supabase stack, applies every migration to an empty database, runs the SQL security/schema tests, and performs signed-JWT requests against local PostgREST using disposable test users. It never connects to hosted staging and needs no hosted Supabase secrets.
 
 For local use, install Docker and the Supabase CLI, then run:
 
@@ -23,7 +23,7 @@ Never use `supabase db reset --linked` against staging or production; the linked
 - Mobile: Expo/React Native catalogue UI with optional live catalogue API connection and a local in-memory bag counter.
 - Database: twelve timestamped Supabase migrations, including private-schema RLS helpers, checkout hardening, 14 foreign-key indexes, and consolidated order/profile policies.
 - CI: clean npm install, tested dependency-audit policy, redirect/audit-policy tests, ESLint, TypeScript typecheck, Next.js production build, Expo Doctor, and Android JS bundle export pass on main ([CI run](https://github.com/danesjanes096-code/yourtaste-marketplace-1/actions/runs/39812396931)).
-- Staging: twelve migrations are recorded. The security/schema smoke test passes, checking public-table RLS, checkout-request client grants, helper RPC grants, privileged function search paths, 14 foreign-key indexes, and consolidated policies. Fresh local migration replay and both SQL guard suites pass in CI ([database replay run](https://github.com/danesjanes096-code/yourtaste-marketplace-1/actions/runs/39812396713)); a disposable hosted-project replay and full schema diff remain open.
+- Staging: twelve migrations are recorded. The security/schema smoke test passes, checking public-table RLS, checkout-request client grants, helper RPC grants, privileged function search paths, 14 foreign-key indexes, and consolidated policies. Fresh local migration replay, both SQL guard suites, and signed-JWT/PostgREST authorization checks pass in CI ([local authorization replay](https://github.com/danesjanes096-code/yourtaste-marketplace-1/actions/runs/39813361026)); a disposable hosted-project replay and full schema diff remain open. The signed-JWT test creates disposable users only in the isolated local stack.
 
 ## Not production-ready
 

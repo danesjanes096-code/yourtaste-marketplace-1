@@ -25,6 +25,7 @@ This checklist is the release control for the current private-pilot approach. A 
 - [x] Staging security/schema smoke test checks RLS coverage, client privileges on checkout idempotency records, helper grants, SECURITY DEFINER search paths, index coverage, and selected policy counts.
 - [x] Staging SQL guard test rejects unauthenticated checkout/address RPCs and non-admin moderation calls using simulated JWT subject claims (`supabase/tests/authz_function_guards.sql`).
 - [x] Add CI tests for staging harness fail-closed behavior: missing config, wrong project, secret/service-role key, and invalid fixture UUIDs are rejected before network calls.
+- [x] Run real signed JWTs through local Supabase Auth/PostgREST in an isolated CI stack for customer A/B address ownership, direct address-write restrictions, anonymous checkout denial, and non-admin moderation denial (`scripts/test-local-postgrest-authz.mjs`). These local checks do not replace hosted staging tests.
 - [ ] Run `npm run test:staging-authz` with two real staging customer JWTs and known synthetic customer-A address/order IDs. The script refuses any URL except the approved staging project and never creates an order.
 - [ ] Extend the staged JWT run to seller A, seller B, and admin after synthetic seller/product fixtures exist; SQL claim simulation is not a substitute.
 - [ ] Confirm real non-admin JWTs cannot invoke moderation RPCs successfully, even with forged product/vendor IDs.
@@ -73,6 +74,6 @@ This checklist is the release control for the current private-pilot approach. A 
 
 - Supabase security advisor reports five callable SECURITY DEFINER functions. Their function bodies include checks, but these must be tested with real JWT identities and reviewed rather than waived automatically.
 - Two high-severity advisories remain upstream-unpatched in transitive Expo build tooling (braces, node-forge); the exact GHSA exceptions are tested, documented, and must be re-reviewed when upstream fixes ship.
-- The real-JWT staging suite is committed but not run yet; it requires synthetic staging accounts, customer-A address/order UUIDs, and their short-lived JWTs in the local shell environment.
+- The hosted real-JWT staging suite is committed but not run yet; staging currently has no Auth users, profiles, addresses, orders, vendors, or products. It needs owner-approved synthetic accounts/fixtures and short-lived customer JWTs. The separate local signed-JWT suite runs only against the disposable local stack.
 - Fresh local migration replay now passes in CI; a full schema diff against hosted staging is still outstanding.
 - Payment, shipping, tax/GST, notifications, monitoring, backup/restore, and production hosting are not finished.

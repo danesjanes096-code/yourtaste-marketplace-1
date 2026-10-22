@@ -32,6 +32,7 @@ Use synthetic accounts and test payment credentials only. Never use real custome
 - [x] `npm run verify:source`, `npm run typecheck`, and `npm run build:web` pass in GitHub Actions on the current commit. See the [CI run](https://github.com/danesjanes096-code/yourtaste-marketplace-1/actions).
 - [x] All twelve timestamped migrations are recorded on staging; `supabase/tests/security_smoke.sql` passes against the live staging catalog.
 - [x] Replay all twelve migrations from an empty local Supabase/PostgreSQL 17 database in CI; both `security_smoke.sql` and `authz_function_guards.sql` pass ([replay run](https://github.com/danesjanes096-code/yourtaste-marketplace-1/actions/runs/39812396713)).
+- [x] Run signed-JWT/PostgREST authorization checks against two disposable users on the local stack for address ownership, direct writes, anonymous checkout, and non-admin moderation ([local run](https://github.com/danesjanes096-code/yourtaste-marketplace-1/actions/runs/39813361026)); hosted-staging user/role checks are still required.
 - [ ] Apply the migration chain to a fresh disposable hosted project and review a full schema diff against staging.
 - [ ] Backup restoration and deployment rollback are rehearsed.
 - [ ] Error alerts, uptime checks and operational runbook are verified.
