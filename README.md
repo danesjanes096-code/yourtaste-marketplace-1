@@ -4,7 +4,7 @@ YourTaste is an India-first multi-vendor marketplace foundation. This repository
 
 ## Local database validation
 
-The database replay workflow starts an isolated local Supabase stack, applies every migration to an empty database, runs the SQL security/schema smoke tests, and performs signed-JWT requests against local PostgREST using disposable test users. It does not connect to the hosted staging project and needs no hosted Supabase secrets. It does not connect to the hosted staging project and needs no Supabase secrets.
+The database replay workflow starts an isolated local Supabase stack, applies every migration to an empty database, runs the SQL security/schema smoke tests, and performs signed-JWT requests against local PostgREST using disposable test users, addresses, and a pending-order fixture. It does not connect to the hosted staging project and needs no hosted Supabase secrets. It does not connect to the hosted staging project and needs no Supabase secrets.
 
 For local use, install Docker and the Supabase CLI, then run:
 
