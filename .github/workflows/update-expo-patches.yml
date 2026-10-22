@@ -1,0 +1,38 @@
+name: Refresh Expo SDK patch lockfile
+
+on:
+  push:
+    branches: [automation/update-expo-patches]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Align Expo packages to SDK-compatible patch versions
+        working-directory: apps/mobile
+        run: npx expo install --fix
+      - name: Reconcile the root workspace lockfile
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Commit updated package manifests and lockfile
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/mobile/package.json package-lock.json
+          if git diff --cached --quiet; then
+            echo "Expo patch versions and lockfile are already aligned."
+          else
+            git commit -m "fix: align Expo SDK patch dependencies"
+            git push origin HEAD:automation/update-expo-patches
+          fi
