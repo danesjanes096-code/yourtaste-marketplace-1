@@ -16,6 +16,9 @@ on:
       - "supabase/config.toml"
       - "supabase/migrations/**"
       - "supabase/tests/**"
+      - "scripts/test-local-postgrest-authz.mjs"
+      - "scripts/verify-source.mjs"
+      - ".github/workflows/database-migration-replay.yml"
 
 permissions:
   contents: read
