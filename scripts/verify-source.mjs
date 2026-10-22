@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const required = [
-  'README.md', '.env.example', 'package.json', 'package-lock.json', 'apps/web/package.json',
+  'README.md', '.env.example', 'package.json', 'package-lock.json', 'supabase/config.toml', 'apps/web/package.json',
   'apps/web/app/page.tsx', 'apps/web/app/layout.tsx',
   'apps/web/app/auth/sign-in/SignInForm.tsx', 'apps/web/app/auth/sign-up/SignUpForm.tsx',
   'apps/web/app/account/addresses/AddressBook.tsx', 'apps/web/app/api/products/route.ts',
@@ -55,6 +55,8 @@ const migrations = fs.readFileSync('supabase/migrations/20261019195955_checkout_
 for (const invariant of ['create_checkout_order', 'release_expired_order_reservations', 'idempotency_key_reused_with_different_request']) {
   if (!migrations.includes(invariant)) errors.push(`Checkout migration invariant missing: ${invariant}`);
 }
+const supabaseConfig = fs.readFileSync('supabase/config.toml', 'utf8');
+if (!supabaseConfig.includes('project_id = "yourtaste-local"')) errors.push('Supabase local config must use the isolated yourtaste-local project ID.');
 const securitySmoke = fs.readFileSync('supabase/tests/security_smoke.sql', 'utf8');
 for (const invariant of ['relrowsecurity', 'checkout_requests', 'private.is_admin()', 'search_path=""']) {
   if (!securitySmoke.includes(invariant)) errors.push(`Security smoke test invariant missing: ${invariant}`);
