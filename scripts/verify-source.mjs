@@ -8,7 +8,7 @@ const required = [
   'apps/web/app/account/addresses/AddressBook.tsx', 'apps/web/app/api/products/route.ts',
   'apps/web/app/api/checkout/orders/route.ts', 'apps/web/app/auth/callback/route.ts', 'apps/web/lib/security/safe-next.mjs', 'apps/web/lib/security/safe-next.d.mts', 'scripts/test-auth-redirect.mjs', 'scripts/check-audit.mjs', 'scripts/test-audit-policy.mjs', 'docs/STAGING_AUTHORIZATION_TEST.md', 'apps/web/proxy.ts', 'apps/web/eslint.config.mjs',
   'apps/mobile/app/index.tsx', 'packages/shared/src/index.ts',
-  '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md', 'docs/DEPENDENCY_SECURITY_EXCEPTIONS.md', 'docs/SECURITY_DEFINER_REVIEW.md', 'supabase/tests/security_smoke.sql', 'supabase/tests/authz_function_guards.sql', 'scripts/test-staging-authorization.mjs', 'scripts/test-staging-authorization-guards.mjs', 'scripts/test-local-postgrest-authz.mjs',
+  '.github/workflows/ci.yml', 'docs/PRODUCTION_READINESS.md', 'docs/DEPENDENCY_SECURITY_EXCEPTIONS.md', 'docs/SECURITY_DEFINER_REVIEW.md', 'supabase/tests/security_smoke.sql', 'supabase/tests/authz_function_guards.sql', 'supabase/tests/rls_ownership.sql', 'scripts/test-staging-authorization.mjs', 'scripts/test-staging-authorization-guards.mjs', 'scripts/test-local-postgrest-authz.mjs',
   ...[
     '20261019195925_marketplace_core.sql',
     '20261019195937_signup_catalogue_guards.sql',
@@ -61,6 +61,10 @@ if (!supabaseConfig.includes('project_id = "yourtaste-local"')) errors.push('Sup
 const securitySmoke = fs.readFileSync('supabase/tests/security_smoke.sql', 'utf8');
 for (const invariant of ['relrowsecurity', 'checkout_requests', 'private.is_admin()', 'search_path=""']) {
   if (!securitySmoke.includes(invariant)) errors.push(`Security smoke test invariant missing: ${invariant}`);
+}
+const ownershipTest = fs.readFileSync('supabase/tests/rls_ownership.sql', 'utf8');
+for (const invariant of ['Customer B can read Customer A address', 'Customer B can read Customer A order', 'address_not_found', 'ROLLBACK']) {
+  if (!ownershipTest.includes(invariant)) errors.push(`RLS ownership test invariant missing: ${invariant}`);
 }
 const hardening = fs.readFileSync('supabase/migrations/20261019203635_checkout_hardening.sql', 'utf8');
 for (const invariant of ['extensions.digest', 'deny client access to checkout requests', "set search_path TO ''"]) {
