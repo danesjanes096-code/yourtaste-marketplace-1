@@ -1,0 +1,51 @@
+name: Refresh mobile lockfile (one-time)
+
+on:
+  push:
+    branches: [automation/database-migration-replay]
+    paths:
+      - "apps/mobile/package.json"
+      - ".github/workflows/refresh-mobile-lockfile.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yourtaste-mobile-lockfile-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh-and-validate:
+    if: github.ref == 'refs/heads/automation/database-migration-replay'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: automation/database-migration-replay
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Refresh lockfile for patched Expo SDK packages
+        run: npm install --package-lock-only --ignore-scripts
+      - run: npm ci
+      - run: npm run verify:source
+      - run: npm run test:security
+      - run: npm --workspace apps/web run lint
+      - run: npm run typecheck
+      - run: npm run build:web
+      - name: Validate Expo SDK package versions
+        working-directory: apps/mobile
+        run: npx expo-doctor
+      - name: Bundle Android app
+        working-directory: apps/mobile
+        run: npx expo export --platform android
+      - name: Commit lockfile and remove this one-time workflow
+        run: |
+          rm .github/workflows/refresh-mobile-lockfile.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json .github/workflows/refresh-mobile-lockfile.yml
+          git commit -m "fix: align Expo SDK patch versions and lockfile"
+          git push origin HEAD:automation/database-migration-replay
