@@ -61,7 +61,11 @@ const securitySmoke = fs.readFileSync('supabase/tests/security_smoke.sql', 'utf8
 for (const invariant of ['relrowsecurity', 'checkout_requests', 'private.is_admin()', 'search_path=""']) {
   if (!securitySmoke.includes(invariant)) errors.push(`Security smoke test invariant missing: ${invariant}`);
 }
-const ownershipTest = fs.readFileSync('supabase/tests/rls_ownership.sql', 'utf8');\nfor (const invariant of ['Customer B can read Customer A address', 'Customer B can read Customer A order', 'address_not_found', 'ROLLBACK']) {\n  if (!ownershipTest.includes(invariant)) errors.push(`RLS ownership test invariant missing: ${invariant}`);\n}\nconst hardening = fs.readFileSync('supabase/migrations/20261019203635_checkout_hardening.sql', 'utf8');
+const ownershipTest = fs.readFileSync('supabase/tests/rls_ownership.sql', 'utf8');
+for (const invariant of ['Customer B can read Customer A address', 'Customer B can read Customer A order', 'address_not_found', 'ROLLBACK']) {
+  if (!ownershipTest.includes(invariant)) errors.push(`RLS ownership test invariant missing: ${invariant}`);
+}
+const hardening = fs.readFileSync('supabase/migrations/20261019203635_checkout_hardening.sql', 'utf8');
 for (const invariant of ['extensions.digest', 'deny client access to checkout requests', "set search_path TO ''"]) {
   if (!hardening.toLowerCase().includes(invariant.toLowerCase())) errors.push(`Checkout hardening invariant missing: ${invariant}`);
 }
