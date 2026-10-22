@@ -8,6 +8,7 @@
 - [ ] Reconcile every file with the staging workspace and pin dependency versions.
 - [x] Require clean-checkout CI for source verification, dependency audit policy, security tests, ESLint, TypeScript typecheck, Next.js production build, Expo Doctor, and Android bundle export.
 - [x] Commit the npm workspace lockfile and add a tested dependency-audit policy. Two upstream-unpatched high-severity advisories in transitive build tooling are narrowly allowlisted and documented.
+- [x] Replay all twelve migrations from an empty local Supabase/PostgreSQL 17 database and pass the SQL security/schema and privileged-function guard tests in CI; a hosted disposable-project schema comparison remains open.
 - [x] Document provider shortlist for a future pilot: Cashfree Easy Split first to evaluate, Razorpay Route alternative; Shiprocket first to evaluate, Delhivery alternative. No provider account or paid service was enabled.
 
 ## Phase 2 — Identity and access

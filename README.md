@@ -22,8 +22,8 @@ Never use `supabase db reset --linked` against staging or production; the linked
 - Web: responsive storefront, Supabase Auth forms, account and address-book routes, seller application/product submission, moderation queue, catalogue API, and pending-order API.
 - Mobile: Expo/React Native catalogue UI with optional live catalogue API connection and a local in-memory bag counter.
 - Database: twelve timestamped Supabase migrations, including private-schema RLS helpers, checkout hardening, 14 foreign-key indexes, and consolidated order/profile policies.
-- CI: clean npm install, tested dependency-audit policy, redirect/audit-policy tests, ESLint, TypeScript typecheck, Next.js production build, Expo Doctor, and Android JS bundle export all pass on the dependency-upgrade branch.
-- Staging: twelve migrations are recorded. The security/schema smoke test passes, checking public-table RLS, checkout-request client grants, helper RPC grants, privileged function search paths, 14 foreign-key indexes, and consolidated policies. Fresh-project migration testing and a full schema diff are still required.
+- CI: clean npm install, tested dependency-audit policy, redirect/audit-policy tests, ESLint, TypeScript typecheck, Next.js production build, Expo Doctor, and Android JS bundle export all pass on main.
+- Staging: twelve migrations are recorded. The security/schema smoke test passes, checking public-table RLS, checkout-request client grants, helper RPC grants, privileged function search paths, 14 foreign-key indexes, and consolidated policies. Fresh local replay and both SQL guard suites pass in CI; a hosted disposable-project replay and full schema diff are still required.
 
 ## Not production-ready
 
