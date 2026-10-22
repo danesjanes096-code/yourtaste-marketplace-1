@@ -7,12 +7,18 @@ on:
       - "supabase/config.toml"
       - "supabase/migrations/**"
       - "supabase/tests/**"
+      - "scripts/test-local-postgrest-authz.mjs"
+      - "scripts/verify-source.mjs"
+      - ".github/workflows/database-migration-replay.yml"
   push:
     branches: [main]
     paths:
       - "supabase/config.toml"
       - "supabase/migrations/**"
       - "supabase/tests/**"
+      - "scripts/test-local-postgrest-authz.mjs"
+      - "scripts/verify-source.mjs"
+      - ".github/workflows/database-migration-replay.yml"
 
 permissions:
   contents: read
@@ -34,6 +40,12 @@ jobs:
         run: supabase start --exclude studio,mail,analytics,realtime,storage,functions
       - name: Replay every migration from an empty database
         run: supabase db reset
+      - name: Run local signed-JWT PostgREST authorization tests
+        shell: bash
+        run: |
+          eval "$(supabase status -o env)"
+          export API_URL ANON_KEY SERVICE_ROLE_KEY
+          node scripts/test-local-postgrest-authz.mjs
       - name: Install PostgreSQL client for SQL smoke tests
         run: |
           sudo apt-get update
