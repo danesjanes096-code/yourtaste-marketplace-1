@@ -7,6 +7,7 @@ This checklist is the release control for the current private-pilot approach. A 
 - [x] No live payment provider is integrated or enabled.
 - [x] No provider account, paid plan, domain, or hosting change was initiated by this implementation work.
 - [ ] Confirm staging environment variables contain only the Supabase public URL and publishable/anon key; verify no service-role/payment/shipping secrets are exposed to web or mobile builds.
+- [x] CI statically rejects secret-like `NEXT_PUBLIC_`/`EXPO_PUBLIC_` names, server-only secrets referenced by client components, and non-empty secret placeholders in `.env.example`.
 - [ ] Use clearly marked synthetic products/users/addresses for staging; remove any accidental real customer data.
 - [ ] Keep provider mode disabled unless explicit sandbox-only credentials and configuration are supplied by the owner.
 - [ ] Never run a live shipment, capture, payout, refund, or paid label from staging.
