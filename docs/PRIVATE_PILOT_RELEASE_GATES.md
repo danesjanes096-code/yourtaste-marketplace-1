@@ -15,8 +15,8 @@ This checklist is the release control for the current private-pilot approach. A 
 
 - [x] GitHub Actions source verification, TypeScript typecheck, and Next.js production build pass on the current recorded run.
 - [x] Commit a reproducible npm workspace lockfile and pass clean-install checks, dependency audit policy, security tests, ESLint, typecheck, Next.js production build, Expo Doctor, and Android bundle export.
-- [x] Add a CI audit policy that blocks unapproved high/critical dependency advisories. Two upstream-unpatched transitive build-tool advisories are narrowly allowlisted and documented in DEPENDENCY_SECURITY_EXCEPTIONS.md; policy tests run in CI.
-- [x] Replay all 12 migrations against an empty local Supabase/PostgreSQL 17 database and run both SQL security/schema tests in CI ([main run](https://github.com/danesjanes096-code/yourtaste-marketplace-1/actions/runs/39812396713)); this does not alter hosted staging.
+- [x] Add a CI audit policy that blocks unapproved high/critical dependency advisories. Three high-severity transitive build-tool advisories are narrowly allowlisted and documented in DEPENDENCY_SECURITY_EXCEPTIONS.md; policy tests run in CI. The Zod exception is limited to Expo CLI's nested Zod 3 dependency; direct vulnerable Zod use remains blocked.
+- [x] Replay all 12 migrations against an empty local Supabase/PostgreSQL 17 database and run both SQL security/schema tests in CI ([main run](https://github.com/danesjanes096-code/yourtaste-marketplace-1/actions/runs/40441761205)); this does not alter hosted staging.
 - [ ] Enable/verify GitHub secret scanning and push protection in repository security settings; this cannot be enabled safely through source changes alone.
 - [ ] Run the full source verification from a clean checkout and verify no secrets or local artifacts are committed.
 
@@ -73,7 +73,7 @@ This checklist is the release control for the current private-pilot approach. A 
 ## Current known blockers
 
 - Supabase security advisor reports five callable SECURITY DEFINER functions. Their function bodies include checks, but these must be tested with real JWT identities and reviewed rather than waived automatically.
-- Two high-severity advisories remain upstream-unpatched in transitive Expo build tooling (braces, node-forge); the exact GHSA exceptions are tested, documented, and must be re-reviewed when upstream fixes ship.
+- Three high-severity advisories are temporarily allowlisted in transitive Expo build tooling: braces and node-forge have no published patch, and the Zod advisory is fixed in Zod 4 but Expo CLI still uses Zod 3. The exact GHSA exceptions are tested, documented, and must be re-reviewed weekly; direct vulnerable Zod use remains blocked.
 - The hosted real-JWT staging suite is committed but not run yet; staging currently has no Auth users, profiles, addresses, orders, vendors, or products. It needs owner-approved synthetic accounts/fixtures and short-lived customer JWTs. The separate local signed-JWT suite runs only against the disposable local stack.
 - Fresh local migration replay now passes in CI; a full schema diff against hosted staging is still outstanding.
 - Payment, shipping, tax/GST, notifications, monitoring, backup/restore, and production hosting are not finished.
