@@ -27,6 +27,9 @@
 
 ## Secrets
 
+- [x] CI statically checks for server-only secret references in client components, secret-like public environment variable names, and populated secret placeholders in `.env.example`.
+- [ ] Audit deployed staging/hosting environment settings directly; a source-code guard cannot inspect hosted environment values.
+
 Never commit `.env` files, Supabase service-role keys, payment secrets, webhook secrets, or customer data. Client apps may use only the public Supabase URL and publishable/anon key with correctly enforced RLS.
 
 ## Payments
