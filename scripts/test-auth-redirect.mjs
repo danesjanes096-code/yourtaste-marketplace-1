@@ -1,4 +1,5 @@
 import test from "node:test";
+import fs from "node:fs";
 import assert from "node:assert/strict";
 import { safeNext } from "../apps/web/lib/security/safe-next.mjs";
 
@@ -28,4 +29,11 @@ test("rejects auth destinations to avoid redirect loops", () => {
 test("falls back for missing or malformed destinations", () => {
   assert.equal(safeNext(null, base), "/account");
   assert.equal(safeNext("http://[::1", base), "/account");
+});
+
+test("sign-in form uses the shared safe redirect validator", () => {
+  const source = fs.readFileSync(new URL("../apps/web/app/auth/sign-in/SignInForm.tsx", import.meta.url), "utf8");
+  assert.match(source, /import \{ safeNext \} from ["']@\/lib\/security\/safe-next\.mjs["']/);
+  assert.match(source, /safeNext\(searchParams\.get\(["']next["']\), window\.location\.origin\)/);
+  assert.doesNotMatch(source, /function safeNext\(/);
 });
