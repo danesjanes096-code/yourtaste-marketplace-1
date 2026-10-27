@@ -1,0 +1,40 @@
+name: Temporary lockfile refresh for SSR cookie migration
+on:
+  push:
+    branches:
+      - automation/ssr-cookie-adapter
+    paths:
+      - "apps/web/package.json"
+      - "package-lock.json"
+      - ".github/workflows/temporary-lock-refresh.yml"
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: automation/ssr-cookie-adapter
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Regenerate workspace lockfile
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          npm update baseline-browser-mapping node-releases caniuse-lite napi-postinstall --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Verify lockfile is installable
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Commit regenerated lockfile
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "Lockfile already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore: refresh SSR and transitive dependency lockfile"
+          git push origin HEAD:automation/ssr-cookie-adapter
