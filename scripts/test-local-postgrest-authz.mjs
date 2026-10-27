@@ -18,10 +18,10 @@ function decodeJwt(token) {
 assert.equal(decodeJwt(anonKey)?.role, "anon", "Expected local Supabase ANON_KEY.");
 assert.equal(decodeJwt(serviceRoleKey)?.role, "service_role", "Expected local Supabase SERVICE_ROLE_KEY.");
 
-async function request(path, { key = anonKey, token, method = "GET", body } = {}) {
+async function request(path, { key = anonKey, token, method = "GET", body, extraHeaders = {} } = {}) {
   const response = await fetch(new URL(path, apiUrl), {
     method,
-    headers: { apikey: key, ...(token ? { Authorization: "Bearer " + token } : {}), ...(body !== undefined ? { "Content-Type": "application/json" } : {}) },
+    headers: { apikey: key, ...(token ? { Authorization: "Bearer " + token } : {}), ...(body !== undefined ? { "Content-Type": "application/json" } : {}), ...extraHeaders },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   });
   const text = await response.text();
@@ -32,6 +32,7 @@ async function request(path, { key = anonKey, token, method = "GET", body } = {}
 function errorText(result) { return typeof result.data === "string" ? result.data : JSON.stringify(result.data); }
 
 const createdUserIds = [];
+const createdOrderIds = [];
 const checks = [];
 async function check(name, run) { await run(); checks.push(name); console.log("PASS " + name); }
 
@@ -64,8 +65,47 @@ async function createAddress(token) {
   assert.match(id ?? "", /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, "Address RPC did not return a UUID.");
   return id;
 }
+async function createOrder(customerId) {
+  const orderNumber = "YT-LOCAL-AUTHZ-" + randomUUID().replaceAll("-", "").toUpperCase();
+  const result = await request("/rest/v1/orders?select=id", {
+    key: serviceRoleKey,
+    token: serviceRoleKey,
+    method: "POST",
+    extraHeaders: { Prefer: "return=representation" },
+    body: {
+      order_number: orderNumber,
+      customer_id: customerId,
+      status: "pending_payment",
+      currency: "INR",
+      subtotal_paise: 100,
+      shipping_paise: 0,
+      tax_paise: 0,
+      discount_paise: 0,
+      total_paise: 100,
+      shipping_address_snapshot: {
+        recipient_name: "Local Test Customer",
+        city: "Pune",
+        state: "Maharashtra",
+        postal_code: "411001",
+        country_code: "IN",
+      },
+    },
+  });
+  assert.equal(result.ok, true, "Could not create temporary local order fixture (HTTP " + result.status + ").");
+  const id = result.data?.[0]?.id;
+  assert.match(id ?? "", /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, "Order fixture did not return a UUID.");
+  createdOrderIds.push(id);
+  return id;
+}
+
 async function cleanupUsers() {
   let failed = false;
+  for (const id of createdOrderIds.reverse()) {
+    try {
+      const result = await request("/rest/v1/orders?id=eq." + encodeURIComponent(id), { key: serviceRoleKey, token: serviceRoleKey, method: "DELETE" });
+      if (!result.ok && result.status !== 404) failed = true;
+    } catch { failed = true; }
+  }
   for (const id of createdUserIds.reverse()) {
     try {
       const result = await request("/auth/v1/admin/users/" + encodeURIComponent(id), { key: serviceRoleKey, token: serviceRoleKey, method: "DELETE" });
@@ -81,6 +121,7 @@ try {
   const customerB = await createCustomer("B");
   assert.notEqual(customerA.id, customerB.id, "Temporary users must be distinct.");
   const addressA = await createAddress(customerA.token);
+  const orderA = await createOrder(customerA.id);
   const fakeId = "00000000-0000-0000-0000-000000000001";
 
   await check("customer A can read their own address through PostgREST", async () => {
@@ -93,6 +134,31 @@ try {
     assert.equal(result.ok, true, "RLS should filter the row rather than fail the read.");
     assert.ok(Array.isArray(result.data)); assert.equal(result.data.length, 0, "RLS exposed another customer's address.");
   });
+  await check("customer B cannot read customer A's profile through RLS", async () => {
+    const result = await request("/rest/v1/profiles?select=id&id=eq." + encodeURIComponent(customerA.id), { token: customerB.token });
+    assert.equal(result.ok, true, "RLS should filter the profile rather than fail the read.");
+    assert.ok(Array.isArray(result.data)); assert.equal(result.data.length, 0, "RLS exposed another customer's profile.");
+  });
+  await check("customer A can read their own order through PostgREST", async () => {
+    const result = await request("/rest/v1/orders?select=id&id=eq." + encodeURIComponent(orderA), { token: customerA.token });
+    assert.equal(result.ok, true, "Customer A order read failed (HTTP " + result.status + ").");
+    assert.ok(Array.isArray(result.data)); assert.equal(result.data.length, 1, "Customer A's order should be visible to its owner.");
+  });
+  await check("customer B cannot read customer A's order through RLS", async () => {
+    const result = await request("/rest/v1/orders?select=id&id=eq." + encodeURIComponent(orderA), { token: customerB.token });
+    assert.equal(result.ok, true, "RLS should filter the order rather than fail the read.");
+    assert.ok(Array.isArray(result.data)); assert.equal(result.data.length, 0, "RLS exposed another customer's order.");
+  });
+  await check("customer B cannot start checkout with customer A's address", async () => {
+    const result = await request("/rest/v1/rpc/create_checkout_order", {
+      token: customerB.token,
+      method: "POST",
+      body: { p_address_id: addressA, p_items: [{ product_id: fakeId, quantity: 1 }], p_idempotency_key: "local-authz-" + randomUUID() },
+    });
+    assert.equal(result.ok, false, "Cross-customer checkout unexpectedly succeeded.");
+    assert.match(errorText(result), /address_not_found|42501|permission denied/i);
+  });
+
   await check("customer B cannot change customer A's default address", async () => {
     const result = await request("/rest/v1/rpc/set_default_customer_address", { token: customerB.token, method: "POST", body: { p_address_id: addressA } });
     assert.equal(result.ok, false, "Cross-customer default-address mutation unexpectedly succeeded.");
