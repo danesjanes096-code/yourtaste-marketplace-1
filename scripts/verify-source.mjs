@@ -5,6 +5,8 @@ const required = [
   'README.md', '.env.example', 'package.json', 'package-lock.json', 'supabase/config.toml', 'apps/web/package.json',
   'apps/web/app/page.tsx', 'apps/web/app/layout.tsx',
   'apps/web/app/auth/sign-in/SignInForm.tsx', 'apps/web/app/auth/sign-up/SignUpForm.tsx',
+  'apps/web/app/auth/forgot-password/page.tsx', 'apps/web/app/auth/forgot-password/ForgotPasswordForm.tsx',
+  'apps/web/app/reset-password/page.tsx', 'apps/web/app/reset-password/ResetPasswordForm.tsx',
   'apps/web/app/account/addresses/AddressBook.tsx', 'apps/web/app/api/products/route.ts',
   'apps/web/app/api/checkout/orders/route.ts', 'apps/web/app/auth/callback/route.ts', 'apps/web/lib/security/safe-next.mjs', 'apps/web/lib/security/safe-next.d.mts', 'scripts/test-auth-redirect.mjs', 'scripts/check-audit.mjs', 'scripts/test-audit-policy.mjs', 'scripts/test-env-separation.mjs', 'docs/STAGING_AUTHORIZATION_TEST.md', 'apps/web/proxy.ts', 'apps/web/eslint.config.mjs',
   'apps/mobile/app/index.tsx', 'packages/shared/src/index.ts',
@@ -44,6 +46,16 @@ const packageLock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
 if (packageLock.lockfileVersion !== 3) errors.push('Expected npm lockfileVersion 3.');
 if (!Array.isArray(packageLock.packages?.['']?.workspaces) || packageLock.packages[''].workspaces.length === 0) errors.push('Dependency lockfile is missing root workspace metadata.');
 if (packageJson.scripts?.['test:security'] !== 'node --test scripts/test-auth-redirect.mjs scripts/test-audit-policy.mjs scripts/test-staging-authorization-guards.mjs scripts/test-env-separation.mjs') errors.push('Security test suite must include redirect, audit-policy, and staging-harness guard tests.');
+const signInForm = fs.readFileSync('apps/web/app/auth/sign-in/SignInForm.tsx', 'utf8');
+if (!signInForm.includes('import { safeNext } from "@/lib/security/safe-next.mjs"') || !signInForm.includes('safeNext(searchParams.get("next"), window.location.origin)')) errors.push('Sign-in redirect must use the shared same-origin safeNext validator.');
+const forgotPassword = fs.readFileSync('apps/web/app/auth/forgot-password/ForgotPasswordForm.tsx', 'utf8');
+for (const invariant of ['resetPasswordForEmail', '/auth/callback?next=%2Freset-password']) {
+  if (!forgotPassword.includes(invariant)) errors.push(`Password recovery invariant missing: ${invariant}`);
+}
+const resetPassword = fs.readFileSync('apps/web/app/reset-password/ResetPasswordForm.tsx', 'utf8');
+for (const invariant of ['updateUser({ password })', 'confirmPassword', 'hasSession']) {
+  if (!resetPassword.includes(invariant)) errors.push(`Password reset invariant missing: ${invariant}`);
+}
 const authCallback = fs.readFileSync('apps/web/app/auth/callback/route.ts', 'utf8');
 for (const invariant of ['safeNext', 'request.nextUrl.searchParams.get("next")']) {
   if (!authCallback.includes(invariant)) errors.push(`Auth callback redirect invariant missing: ${invariant}`);
