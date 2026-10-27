@@ -7,6 +7,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export default function ResetPasswordForm() {
   const router = useRouter();
+  const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   const [ready, setReady] = useState(false);
   const [hasSession, setHasSession] = useState(false);
   const [password, setPassword] = useState("");
@@ -17,11 +18,7 @@ export default function ResetPasswordForm() {
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
-    if (!supabase) {
-      setMessage("Password recovery is not configured yet. Please try again later.");
-      setReady(true);
-      return;
-    }
+    if (!supabase) return;
     let active = true;
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (active) {
@@ -73,6 +70,7 @@ export default function ResetPasswordForm() {
     }
   }
 
+  if (!configured) return <p className="mt-7 text-sm text-[#786e65]" role="status">Password recovery is not configured yet. Please try again later.</p>;
   if (!ready) return <p className="mt-7 text-sm text-[#786e65]" role="status">Checking your reset link…</p>;
   if (!hasSession || complete) {
     return (
