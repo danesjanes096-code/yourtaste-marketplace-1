@@ -1,8 +1,8 @@
 # Dependency security exceptions
 
-Reviewed: 2026-10-20
+Reviewed: 2026-10-27
 
-The CI dependency audit blocks all unapproved high/critical findings. Two advisories currently have no patched npm release listed by the upstream GitHub Advisory Database and are allowed only as transitive build-tool dependencies. The exception is temporary, narrow, tested, and must be revisited when upstream status changes.
+The CI dependency audit blocks all unapproved high/critical findings. Three high-severity advisories are temporarily allowed only through reviewed transitive build-tool dependency chains. The first two have no patched npm release listed by the upstream GitHub Advisory Database. The third has a patched Zod 4 release, but the current Expo CLI line still depends on Zod 3 and does not yet provide a compatible patched dependency range. These are not production API dependencies; the exceptions are narrow, tested, and must be revisited weekly. The exception is temporary, narrow, tested, and must be revisited when upstream status changes.
 
 ## Allowed advisories
 
@@ -14,10 +14,16 @@ The CI dependency audit blocks all unapproved high/critical findings. Two adviso
   - Advisory: https://github.com/advisories/GHSA-86w9-cpqp-85rv
   - Upstream issue: https://github.com/digitalbazaar/forge/issues/1149
 
+- **Zod — GHSA-mrhx-c7xc-m3w5 / CVE-2023-54404 (High).** This resource-exhaustion advisory affects Zod versions below 4.6.6. The lockfile's root Zod 4.6.7 is patched; the remaining affected copy is nested under Expo CLI (Zod 3.25.76). Current Expo CLI 58.1.15 dependency reporting still shows that Zod 3 dependency, and no compatible patched Zod 3 release is listed. Do not force an untested Zod 4 override into Expo CLI. This is local build/configuration tooling, not a YourTaste server-side request-validation dependency; only run Expo tooling against trusted repository content and keep CI/dev tooling isolated. Direct vulnerable Zod dependencies remain blocked by the audit policy.
+  - Advisory: https://github.com/advisories/GHSA-mrhx-c7xc-m3w5
+  - Dependency evidence: https://snyk.io/test/github/eduardomioto/devtools-performance-insights
+
 ## Controls and review
 
-- scripts/check-audit.mjs permits only these exact advisory URLs and only through transitive chains. Direct use of braces/node-forge, critical findings, unknown chains, missing reports, or any other high/critical advisory fail CI.
-- scripts/test-audit-policy.mjs tests both allowed cases and fail-closed behavior.
-- Do not add a package override to a version that does not exist. The advisories currently have no patched releases; attempted overrides were removed after npm correctly rejected nonexistent versions.
+- Expo SDK/router patch versions are aligned with `expo-doctor`'s current compatibility metadata, and the root npm lockfile is regenerated and checked with `npm ci` after package changes.
+
+- scripts/check-audit.mjs permits only these exact advisory URLs and only through transitive chains. Direct use of braces/node-forge/Zod, critical findings, unknown chains, missing reports, or any other high/critical advisory fail CI. Blocked findings print their dependency-chain causes to make future failures diagnosable.
+- scripts/test-audit-policy.mjs tests the three narrow transitive exceptions, direct-use blocking, unknown advisories, critical findings, and fail-closed dependency chains.
+- Do not add a package override to a version that does not exist. Do not force a Zod 4 override into Expo CLI until its compatibility is tested. The Expo CLI Zod 3 dependency currently has no compatible patched 3.x version listed.
 - Re-check the advisory pages before each pilot release and weekly until upstream patches are published. Remove each exception and its test fixture as soon as a patched release is available.
 - These exceptions do not close other YourTaste launch gates, including real-JWT authorization tests and Supabase SECURITY DEFINER review.

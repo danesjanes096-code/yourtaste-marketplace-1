@@ -3,6 +3,7 @@ import fs from "node:fs";
 export const ALLOWED_UNPATCHED_ADVISORIES = new Set([
   "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
   "https://github.com/advisories/GHSA-86w9-cpqp-85rv",
+  "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
 ]);
 
 const BLOCKING = new Set(["high", "critical"]);
@@ -16,7 +17,7 @@ export function findBlockingHighVulnerabilities(vulnerabilities) {
     if (vulnerability.severity === "critical") {
       return { ok: false, foundAllowed: false };
     }
-    if (vulnerability.isDirect && (name === "braces" || name === "node-forge")) {
+    if (vulnerability.isDirect && (name === "braces" || name === "node-forge" || name === "zod")) {
       return { ok: false, foundAllowed: false };
     }
     if (visiting.has(name)) {
@@ -90,7 +91,10 @@ function main() {
   const blocking = findBlockingHighVulnerabilities(report.vulnerabilities);
   if (blocking.length) {
     console.error("Unapproved high/critical dependency advisories:");
-    for (const item of blocking) console.error("- " + item.name + " (" + item.severity + "); fix available: " + JSON.stringify(item.fixAvailable));
+    for (const item of blocking) {
+      const causes = item.via.map((reason) => typeof reason === "string" ? reason : reason?.url ?? reason?.name ?? reason?.title ?? "unknown");
+      console.error("- " + item.name + " (" + item.severity + "); causes: " + JSON.stringify(causes) + "; fix available: " + JSON.stringify(item.fixAvailable));
+    }
     process.exit(1);
   }
 

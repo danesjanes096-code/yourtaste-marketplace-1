@@ -4,6 +4,7 @@ import { findBlockingHighVulnerabilities } from "./check-audit.mjs";
 
 const bracesUrl = "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm";
 const forgeUrl = "https://github.com/advisories/GHSA-86w9-cpqp-85rv";
+const zodUrl = "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5";
 
 test("allows only the documented unpatched braces advisory", () => {
   const vulnerabilities = {
@@ -17,6 +18,22 @@ test("allows only the documented unpatched node-forge advisory", () => {
     "node-forge": { severity: "high", isDirect: false, via: [{ title: "node-forge signature issue", url: forgeUrl }] },
   };
   assert.deepEqual(findBlockingHighVulnerabilities(vulnerabilities), []);
+});
+
+test("allows the Zod advisory only when it is confined to a transitive build-tool chain", () => {
+  const vulnerabilities = {
+    zod: { severity: "high", isDirect: false, via: [{ title: "Zod resource exhaustion", url: zodUrl }] },
+    "@expo/cli": { severity: "high", isDirect: false, via: ["zod", "node-forge"] },
+    "node-forge": { severity: "high", isDirect: false, via: [{ url: forgeUrl }] },
+  };
+  assert.deepEqual(findBlockingHighVulnerabilities(vulnerabilities), []);
+});
+
+test("blocks direct vulnerable Zod use even when its advisory is allowlisted", () => {
+  const vulnerabilities = {
+    zod: { severity: "high", isDirect: true, via: [{ url: zodUrl }] },
+  };
+  assert.deepEqual(findBlockingHighVulnerabilities(vulnerabilities).map((v) => v.name), ["zod"]);
 });
 
 test("allows high-severity transitive parents only when every high chain reaches an approved advisory", () => {
