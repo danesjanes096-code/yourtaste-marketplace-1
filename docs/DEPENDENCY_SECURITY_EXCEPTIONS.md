@@ -20,6 +20,8 @@ The CI dependency audit blocks all unapproved high/critical findings. Three high
 
 ## Controls and review
 
+- Expo SDK/router patch versions are aligned with `expo-doctor`'s current compatibility metadata, and the root npm lockfile is regenerated and checked with `npm ci` after package changes.
+
 - scripts/check-audit.mjs permits only these exact advisory URLs and only through transitive chains. Direct use of braces/node-forge/Zod, critical findings, unknown chains, missing reports, or any other high/critical advisory fail CI. Blocked findings print their dependency-chain causes to make future failures diagnosable.
 - scripts/test-audit-policy.mjs tests the three narrow transitive exceptions, direct-use blocking, unknown advisories, critical findings, and fail-closed dependency chains.
 - Do not add a package override to a version that does not exist. Do not force a Zod 4 override into Expo CLI until its compatibility is tested. The Expo CLI Zod 3 dependency currently has no compatible patched 3.x version listed.
